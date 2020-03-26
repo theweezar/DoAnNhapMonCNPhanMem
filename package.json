@@ -1,0 +1,28 @@
+{
+  "name": "doannhapmoncnphanmem",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theweezar/DoAnNhapMonCNPhanMem.git"
+  },
+  "author": "Group_19",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/theweezar/DoAnNhapMonCNPhanMem/issues"
+  },
+  "homepage": "https://github.com/theweezar/DoAnNhapMonCNPhanMem#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^4.0.0",
+    "multer": "^1.4.2",
+    "socket.io": "^2.3.0"
+  }
+}
