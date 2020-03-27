@@ -115,25 +115,82 @@ body{
 .app-container .chat-container .chat-box .box-1{
   border-bottom: 1px solid #bababa;
   position: relative;
+  /* padding-top: 25px; */
 }
 
 .app-container .chat-container .chat-box .box-1 .msg-box{
   position: absolute;
   width: 60%;
   height: 100%;
-  background: springgreen;
+  border: 1px solid black;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
+  overflow-y: scroll;
 }
 
-.app-container .chat-container .chat-box .box-1 .msg-box .sent-msg{
-  text-align: right;
-  padding: 10px 0px;
-  max-width: 300px;
-  min-width: 100px;
+.app-container .chat-container .chat-box .box-1 .msg-box .sent-f{
+  display: grid;
+  grid-template-columns: 90% 10%;
+  border: 1px solid black;
+  margin-top: 3px;
 }
 
-.app-container .chat-container .chat-box .box-1 .msg-box .rcv-msg{
-  padding: 10px 0px;
+.app-container .chat-container .chat-box .box-1 .msg-box .sent-f .sent-ava{
+  position: relative;
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .sent-f .sent-ava img{
+  position: absolute;
+  width: 30px;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%,0);
+}
+
+/* .app-container .chat-container .chat-box .box-1 .msg-box .sent-f .sent-ct{
+  border: 1px solid black;
+} */
+
+.app-container .chat-container .chat-box .box-1 .msg-box .sent-f .sent-ct .sent-ct-inb{
+  float: right;
+  width: 50%;
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .sent-f .sent-ct .sent-ct-inb p{
+  background-color: lightskyblue;
+  border-radius: 5px;
+  margin: 0;
+  padding: 5px 10px;
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .rcv-f{
+  display: grid;
+  grid-template-columns: 10% 90%;
+  border: 1px solid black;
+  margin-top: 3px;
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .rcv-f .rcv-ava{
+  position: relative;
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .rcv-f .rcv-ava img{
+  position: absolute;
+  width: 30px;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%,0);
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .rcv-f .rcv-ct .rcv-ct-inb{
+  float: left;
+  width: 50%;
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .rcv-f .rcv-ct .rcv-ct-inb p{
+  background-color: lightgray;
+  border-radius: 5px;
+  margin: 0;
+  padding: 5px 10px;
 }
