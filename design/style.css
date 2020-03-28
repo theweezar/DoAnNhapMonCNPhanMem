@@ -217,9 +217,9 @@ body{
   filter: invert(63%) sepia(96%) saturate(5727%) hue-rotate(187deg) brightness(109%) contrast(103%);
 }
 
-.app-container .chat-container .chat-box .box-2 .t-field{
+/* .app-container .chat-container .chat-box .box-2 .t-field{
 
-}
+} */
 
 .app-container .chat-container .chat-box .box-2 .t-field textarea{
   resize: none;

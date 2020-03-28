@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sender</title>
   <link rel="stylesheet" href="style.css">
+  <script src="../public/js/jquery.min.js"></script>
 </head>
 <body>
   <div class="app-container">
@@ -43,7 +44,7 @@
       </div>
       <div class="chat-box">
         <div class="box-1">
-          <div class="msg-box">
+          <div id="msg_box" class="msg-box">
             <!-- 1 sent message frame starts here -->
             <div class="sent-f">
               <div class="sent-ct">
@@ -89,14 +90,44 @@
             <img width="20px" src="../ui_ux/file-solid.svg" alt="" srcset="">
           </div>
           <div class="t-field">
-            <textarea name="" id=""></textarea>
+            <textarea name="" id="t_msg"></textarea>
           </div>
           <div class="f-icon">
-            <img width="25px" src="../ui_ux/paper-plane-solid.svg" alt="" srcset="">
+            <img id="s_btn" width="25px" src="../ui_ux/paper-plane-solid.svg" alt="" srcset="">
           </div>
         </div>
       </div>
     </div>
   </div>
+  <script src="./type_s_rcv.js"></script>
+  <script>
+    $(function(){
+      $("#t_msg").keyup(function(e){ // Type enter and the msg will be sent to server
+        if (e.keyCode === 13){
+          var msg = $(this).val();
+
+          // Show the msg in chatbox
+          $("#msg_box").append(`
+            <div class="sent-f">
+              <div class="sent-ct">
+                <div class="sent-ct-inb">
+                  <p>${msg}</p>
+                </div>
+              </div>
+              <div class="sent-ava">
+                <img src="../ui_ux/PngItem_5167304.png" alt="" srcset="">
+              </div>
+            </div>
+          `);
+
+          $(this).val("");
+        }
+      }).keydown(function(e){ // Avoid creating massive space
+        if (e.keyCode === 13){
+          $(this).val($(this).val().trim());
+        }
+      });
+    });
+  </script>
 </body>
 </html>
