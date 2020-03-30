@@ -15,3 +15,11 @@ app.get("/",(req,res) => {
   res.end("Welcome to Hell!");
 });
 
+io.on("connect",socket => {
+  socket.on("CONNECT_TO_THE_SERVER",username => {
+    console.log(`${username} is connected to the server !`);
+  });
+  socket.on("DISCONNECT_TO_THE_SERVER",username => {
+    console.log(`${username} is disconnected to the server !`);
+  });
+});

@@ -1,0 +1,25 @@
+1/ Register - Collect full name, username, email, phone number, birthday,... something but we 
+   don't know yet
+
+2/ Login
+
+3/ Search friends with username, phone number, name, .... And request to add friend, you
+   have the right to decline or accept that request. If the requestion is accepted, you can
+   see them on the friend list.
+
+4/ Handle Events:
+
+ + When your friends connect to the server -> Receive a sign that they're online
+
+ + When your friend disconnect to the server -> Receive a sign that they're offline
+
+ + Choose a friend to chat -> Collect sender's username | id and receiver's username | id
+   then when sender send a msg, the server will check if it safe, afterthat the server will
+   send it to the receiver, finally the server will save the msg to database
+
+ + If the msg is an image, the server will check the image size, if it too big, the server will
+   resize that image, afterthat the server will generate a random name for the image, save it to
+   a folder. That folder will contain 24 folders base one the first character of image's name,
+   finally save that msg in database but with another kind, that msg in database will be the link
+   to the image 
+
