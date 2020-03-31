@@ -1,1 +1,123 @@
-<h1>This is app</h1>
+<div class="app-container">
+  <div class="nav">
+    <ul>
+      <li>Icon</li>
+      <li><a href="/logout">LOGOUT</a></li>
+    </ul>
+    <div class="title">Messages</div>
+  </div>
+  <div class="chat-container">
+    <div class="contact-list">
+      <ul>
+        <li>
+          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
+          <div class="in4">
+            <div class="in4-1">Admin</div>
+            <div class="in4-2">Hello world...<span>18:25</span></div>
+          </div>
+        </li>
+        <li>
+          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
+          <div class="in4">
+            <div class="in4-1">User 1</div>
+            <div class="in4-2">Hello world...<span>18:25</span></div>
+          </div>
+        </li>
+        <li>
+          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
+          <div class="in4">
+            <div class="in4-1">User 2</div>
+            <div class="in4-2">Hello world...<span>18:25</span></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="chat-box">
+      <div class="box-1">
+        <div id="msg_box" class="msg-box">
+          <!-- 1 sent message frame starts here -->
+          <div class="sent-f">
+            <div class="sent-ct">
+              <div class="sent-ct-inb">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate beatae, magnam earum vero nam nulla amet distinctio iure harum eligendi sed omnis quasi officia facilis explicabo, laudantium quod ipsam soluta.</p>
+              </div>
+            </div>
+            <div class="sent-ava">
+              <img src="icon/PngItem_5167304.png" alt="" srcset="">
+            </div>
+          </div>
+          <!-- ends here -->
+          <div class="sent-f">
+            <div class="sent-ct">
+              <div class="sent-ct-inb">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate beatae, magnam earum vero nam nulla amet distinctio iure harum eligendi sed omnis quasi officia facilis explicabo, laudantium quod ipsam soluta.</p>
+              </div>
+            </div>
+            <div class="sent-ava">
+              <img src="icon/PngItem_5167304.png" alt="" srcset="">
+            </div>
+          </div>
+
+          <!-- 1 received message frame starts here -->
+          <div class="rcv-f">
+            <div class="rcv-ava">
+              <img src="icon/PngItem_5167304.png" alt="" srcset="">
+            </div>
+            <div class="rcv-ct">
+              <div class="rcv-ct-inb">
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laudantium sint excepturi eius nesciunt iure velit exercitationem sed nulla. Molestias rerum non ad eum fuga laudantium nihil, odio fugiat iure deleniti!Omnis eaque obcaecati saepe numquam non. Dolorum assumenda impedit inventore nisi dolor, explicabo tempora cum tenetur. Omnis accusamus, natus ipsa beatae assumenda sunt expedita accusantium ex dolore facilis quas obcaecati.</p>
+              </div>
+            </div>
+          </div>
+          <!-- ends here -->
+        </div>
+      </div>
+      <div class="box-2">
+        <div class="f-icon">
+          <img width="25px" src="icon/smile-solid.svg" alt="" srcset="">
+        </div>
+        <div class="f-icon">
+          <img width="20px" src="icon/file-solid.svg" alt="" srcset="">
+        </div>
+        <div class="t-field">
+          <textarea name="" id="t_msg"></textarea>
+        </div>
+        <div class="f-icon">
+          <img id="s_btn" width="25px" src="icon/paper-plane-solid.svg" alt="" srcset="">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function(){
+    $("#t_msg").keyup(function(e){ // Type enter and the msg will be sent to server
+      if (e.keyCode === 13){
+        var msg = $(this).val();
+
+        if (msg.trim() !== ""){
+          // Show the msg in chatbox
+          $("#msg_box").append(`
+            <div class="sent-f">
+              <div class="sent-ct">
+                <div class="sent-ct-inb">
+                  <p>${msg}</p>
+                </div>
+              </div>
+              <div class="sent-ava">
+                <img src="icon/PngItem_5167304.png" alt="" srcset="">
+              </div>
+            </div>
+          `);
+        }
+
+        $(this).val("");
+      }
+    }).keydown(function(e){ // Avoid creating massive space
+      if (e.keyCode === 13){
+        $(this).val($(this).val().trim());
+      }
+    });
+  });
+</script>

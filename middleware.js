@@ -1,8 +1,10 @@
-const redirectLogin = (req,res,next) => {
-  if (!req.session.logged){
-    res.redirect("/login");
-  }
-  else next();
+const middleware = {
+  redirectLogin: (req,res,next) => {
+    if (!req.session.logged){
+      res.redirect("/");
+    }
+    else next();
+  },
 }
 
-module.exports = redirectLogin;
+module.exports = middleware;
