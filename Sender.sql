@@ -4,6 +4,5 @@ CREATE TABLE User(
   pw TEXT,
   fname VARCHAR(50),
   gender BIT,
-  birth VARCHAR(10),
 )
 

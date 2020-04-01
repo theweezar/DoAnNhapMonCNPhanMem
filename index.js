@@ -20,6 +20,8 @@ conn.connect(err => {
 })
 
 const mdW = require("./middleware.js");
+const s = require("./validation");
+
 app.use(session({
   secret:"thisisasecret",
   resave:true,
@@ -47,6 +49,8 @@ app.get("/",(req,res) => {
 });
 
 app.post("/login",(req,res) => {
+  let email = (s.validateEmail(req.body.email) ? req.body.email:"");
+  let password = (s.validatePassword(req.body.password) ? req.body.password:"");
   if (req.body.email === "admin" && req.body.password === "admin"){
     req.session.email = req.body.email;
     req.session.logged = true;
@@ -59,7 +63,20 @@ app.get("/register",mdW.redirectApp,(req,res) => {
 })
 
 app.post("/register",(req,res) => {
-  
+  let firstName = (s.validateName(req.body.firstName.trim) ? req.body.firstName:"");
+  let lastName = (s.validateName(req.body.lastName) ? req.body.lastName:"");
+  let gender = (req.body.gender === "0" || req.body.gender === "1" ? req.body.gender:"");
+  let email = (s.validateEmail(req.body.email) ? req.body.email:"");
+  let password = (s.validatePassword(req.body.password) ? req.body.password:"");
+  let rePassword = (s.validatePassword(req.body.rePassword) ? req.body.rePassword:"");
+
+  if (
+    firstName !== "" && lastName !== "" && gender !== "" &&
+    email !== "" && password !== "" && rePassword !== ""
+  ){
+    
+  }
+  else res.redirect("/register");
 })
 
 app.get("/logout",(req,res) => {
