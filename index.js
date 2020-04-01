@@ -6,6 +6,19 @@ const io = require("socket.io")(http);
 const exphbs = require("express-handlebars");
 const PORT = process.env.PORT | 8080;
 const session = require("express-session");
+
+const mysql = require("mysql");
+const conn = mysql.createConnection({
+  host:"localhost",
+  user:"root",
+  password:"",
+  database:"test"
+});
+conn.connect(err => {
+  if (err) throw err;
+  else console.log("Connected to database successfully !");
+})
+
 const mdW = require("./middleware.js");
 app.use(session({
   secret:"thisisasecret",
@@ -29,16 +42,24 @@ app.use(express.urlencoded({extended:false}));
 app.get("/",(req,res) => {
   if (!req.session.logged) res.render("login");
   else{
-    res.redirect("app");
+    res.redirect("/app");
   }
 });
 
 app.post("/login",(req,res) => {
-  if (req.body.username === "admin" && req.body.password === "admin"){
-    req.session.username = req.body.username;
+  if (req.body.email === "admin" && req.body.password === "admin"){
+    req.session.email = req.body.email;
     req.session.logged = true;
-    res.redirect("app");
+    res.redirect("/app");
   }
+})
+
+app.get("/register",mdW.redirectApp,(req,res) => {
+  res.render("register");
+})
+
+app.post("/register",(req,res) => {
+  
 })
 
 app.get("/logout",(req,res) => {
@@ -56,11 +77,11 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
 })
 
 io.on("connect",socket => {
-  socket.on("CONNECT_TO_THE_SERVER",username => {
-    console.log(`${username} is connected to the server !`);
+  socket.on("CONNECT_TO_THE_SERVER",email => {
+    console.log(`${email} is connected to the server !`);
   });
-  socket.on("DISCONNECT_TO_THE_SERVER",username => {
-    console.log(`${username} is disconnected to the server !`);
+  socket.on("DISCONNECT_TO_THE_SERVER",email => {
+    console.log(`${email} is disconnected to the server !`);
   });
 });
 

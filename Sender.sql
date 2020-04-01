@@ -1,0 +1,9 @@
+CREATE TABLE User(
+  id INT PRIMARY KEY IDENTITY(1,1),
+  email VARCHAR(50) NOT NULL UNIQUE,
+  pw TEXT,
+  fname VARCHAR(50),
+  gender BIT,
+  birth VARCHAR(10),
+)
+
