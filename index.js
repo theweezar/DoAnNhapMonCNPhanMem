@@ -79,14 +79,22 @@ app.post("/register",(req,res) => {
     firstName !== "" && lastName !== "" && gender !== "" && username !== "" &&
     email !== "" && password !== "" && rePassword !== ""
   ){
-    let fullname = `${firstName} ${lastName}`;
-    // Check if input username and email is existed or not ?
-    let query = `INSERT INTO User (username,password,email,fullname,gender) VALUES
-    ('${username}','${password}','${email}','${fullname}',${gender})`;
-    conn.query(query,err => {
+    if (password === rePassword){
+      let fullname = `${firstName} ${lastName}`;
+      let query = `INSERT INTO User (username,password,email,fullname,gender) VALUES
+      ('${username}','${password}','${email}','${fullname}',${gender})`;
+      conn.query(query,err => {
+        if (err) throw err;
+      })
+      // res.end(`${fullname}-${gender}-${username}-${email}-${password}`);
+      res.redirect("/login");
+    }
+    conn.query(`SELECT * from User WHERE username = '${username}'`,(err,rs) => {
       if (err) throw err;
-    })
-    res.end(`${firstName}-${lastName}-${gender}-${username}-${email}-${password}`);
+      else{
+        
+      } 
+    });
   }
   else res.redirect("/register");
 })
