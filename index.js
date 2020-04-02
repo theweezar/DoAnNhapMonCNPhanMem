@@ -41,21 +41,26 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
 
-app.get("/",(req,res) => {
-  if (!req.session.logged) res.render("login");
-  else{
-    res.redirect("/app");
-  }
+app.get("/",mdW.redirectApp,(req,res) => {
+  res.render("login");
 });
 
+app.get("/login",mdW.redirectApp,(req,res) => {
+  res.render("login");
+})
+
 app.post("/login",(req,res) => {
-  let email = (s.validateEmail(req.body.email) ? req.body.email:"");
-  let password = (s.validatePassword(req.body.password) ? req.body.password:"");
-  if (req.body.email === "admin" && req.body.password === "admin"){
-    req.session.email = req.body.email;
+  let username = (req.body.username.length >= 9 && req.body.username.length <= 20 ? s.validateString(req.body.username.trim()):"");
+  let password = s.validatePassword(req.body.password.trim());
+  // Get data from database
+  // Encode input data
+  // Check input data if it is corrected or not
+  if (username === "admin" && password === "admin"){
+    req.session.username = email;
     req.session.logged = true;
     res.redirect("/app");
   }
+  res.render("login",{err:true});
 })
 
 app.get("/register",mdW.redirectApp,(req,res) => {
@@ -63,18 +68,25 @@ app.get("/register",mdW.redirectApp,(req,res) => {
 })
 
 app.post("/register",(req,res) => {
-  let firstName = (s.validateName(req.body.firstName.trim) ? req.body.firstName:"");
-  let lastName = (s.validateName(req.body.lastName) ? req.body.lastName:"");
+  let firstName = s.validateName(req.body.firstName.trim());
+  let lastName = s.validateName(req.body.lastName.trim());
   let gender = (req.body.gender === "0" || req.body.gender === "1" ? req.body.gender:"");
-  let email = (s.validateEmail(req.body.email) ? req.body.email:"");
-  let password = (s.validatePassword(req.body.password) ? req.body.password:"");
-  let rePassword = (s.validatePassword(req.body.rePassword) ? req.body.rePassword:"");
-
+  let username = (req.body.username.length >= 9 && req.body.username.length <= 20 ? s.validateString(req.body.username.trim()):"");
+  let email = s.validateEmail(req.body.email.trim());
+  let password = s.validatePassword(req.body.password.trim());
+  let rePassword = s.validatePassword(req.body.rePassword.trim());
   if (
-    firstName !== "" && lastName !== "" && gender !== "" &&
+    firstName !== "" && lastName !== "" && gender !== "" && username !== "" &&
     email !== "" && password !== "" && rePassword !== ""
   ){
-    
+    let fullname = `${firstName} ${lastName}`;
+    // Check if input username and email is existed or not ?
+    let query = `INSERT INTO User (username,password,email,fullname,gender) VALUES
+    ('${username}','${password}','${email}','${fullname}',${gender})`;
+    conn.query(query,err => {
+      if (err) throw err;
+    })
+    res.end(`${firstName}-${lastName}-${gender}-${username}-${email}-${password}`);
   }
   else res.redirect("/register");
 })

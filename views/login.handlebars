@@ -1,7 +1,7 @@
 <div class="login-box">
   <form action="/login" method="post">
     <div class="ip-g">
-      <input placeholder="Email" type="text" name="email" id="">
+      <input placeholder="Username" type="text" name="username" id="">
     </div>
     <div class="ip-g">
       <input placeholder="Password" type="password" name="password" id="">
@@ -11,3 +11,9 @@
     </div>
   </form>
 </div>
+
+{{#if err}}
+<script>
+  alert("Wrong username or password ! Please try again.");
+</script>
+{{/if}}

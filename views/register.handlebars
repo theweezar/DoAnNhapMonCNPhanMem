@@ -1,10 +1,10 @@
 <div class="reg-box">
   <form action="/register" method="post">
     <div class="ip-g">
-      <input placeholder="First name" type="text" name="firstName" id="">
+      <input required="required" placeholder="First name" type="text" name="firstName" id="">
     </div>
     <div class="ip-g">
-      <input placeholder="Last name" type="text" name="lastName" id="">
+      <input required="required" placeholder="Last name" type="text" name="lastName" id="">
     </div>
     <div>
       <label for="gender">Gender: </label>
@@ -14,13 +14,16 @@
       </select>
     </div>
     <div class="ip-g">
-      <input placeholder="Email" type="text" name="email" id="">
+      <input required="required" placeholder="Username (9-20 characters)" type="text" name="username" id="">
     </div>
     <div class="ip-g">
-      <input placeholder="Password" type="password" name="password" id="">
+      <input required="required" placeholder="Email" type="text" name="email" id="">
     </div>
     <div class="ip-g">
-      <input placeholder="Password" type="password" name="rePassword" id="">
+      <input required="required" placeholder="Password (9-20 characters)" type="password" name="password" id="">
+    </div>
+    <div class="ip-g">
+      <input required="required" placeholder="Type your password again" type="password" name="rePassword" id="">
     </div>
     <div>
       <input type="submit" value="Register">

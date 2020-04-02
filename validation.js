@@ -14,24 +14,27 @@ const validations = {
       l1.test(email) && !l2.test(email) && 
       l3.test(email) && !l4.test(email) && 
       !l5.test(email) 
-      ? true:false
+      ? email:""
     );
   },
   validateString: (str = "") => {
     // if str exists all this none-character, this func will return false 
-    let l1 = /(["'\\|${}()])+/g;
-    return !l1.test(str);
+    // let l1 = /(["'\\|${}()])+/g;
+    return (!(/(["'\\|${}()])+/g).test(str) ? str:"");
   },
   validateName: (name = "") => {
-    let l1 = /\W+/g;
-    let l2 = /([0-9])/g;
-    return (!l1.test(name) || !l2.test(name) ? true:false);
+    // let l1 = /\W+/g;
+    // let l2 = /([0-9])/g;
+    return (!(/\W+/g).test(name) || !(/([0-9])/g).test(name) ? name:"");
   },
   validatePassword: (password = "") => {
-    let l1 = /([A-Z])/g;
-    let l2 = /([0-9])/g;
-    let l3 = /\W+/g;
-    return (l1.test(password) && l2.test(password) && l3.test(password) ? true:false); 
+    // let l1 = /([A-Z])/g;
+    // let l2 = /([0-9])/g;
+    // let l3 = /\W/g;
+    return (
+      (/([A-Z])/g).test(password) && (/([0-9])/g).test(password) && 
+      !(/\W+/g).test(password) && password.length >= 9 && password.length <= 20 ? password:""
+    ); 
   }
 }
 
