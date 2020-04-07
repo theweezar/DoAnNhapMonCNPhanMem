@@ -6,6 +6,8 @@ const io = require("socket.io")(http);
 const exphbs = require("express-handlebars");
 const PORT = process.env.PORT | 8080;
 const session = require("express-session");
+const async = require("asyncawait/async");
+const await = require("asyncawait/await");
 
 const mysql = require("mysql");
 const conn = mysql.createConnection({
@@ -53,14 +55,26 @@ app.post("/login",(req,res) => {
   let username = (req.body.username.length >= 9 && req.body.username.length <= 20 ? s.validateString(req.body.username.trim()):"");
   let password = s.validatePassword(req.body.password.trim());
   // Get data from database
+  conn.query(`SELECT * from User WHERE username='${username}'`,(err,rs) => {
+    if (err) throw err;
+    else{
+      if (rs[0].password === password){
+        req.session.username = username;
+        req.session.logged = true;
+        res.redirect("/app");
+        // res.end(`${rs[0]}`);
+      }
+      else res.render("login",{err:true});
+    }
+  })
   // Encode input data
   // Check input data if it is corrected or not
-  if (username === "admin" && password === "admin"){
-    req.session.username = email;
-    req.session.logged = true;
-    res.redirect("/app");
-  }
-  res.render("login",{err:true});
+  // if (username === "admin" && password === "admin"){
+  //   req.session.username = username;
+  //   req.session.logged = true;
+  //   res.redirect("/app");
+  // }
+  // res.render("login",{err:true});
 })
 
 app.get("/register",mdW.redirectApp,(req,res) => {
@@ -85,16 +99,16 @@ app.post("/register",(req,res) => {
       ('${username}','${password}','${email}','${fullname}',${gender})`;
       conn.query(query,err => {
         if (err) throw err;
+        else res.redirect("/login");
       })
       // res.end(`${fullname}-${gender}-${username}-${email}-${password}`);
-      res.redirect("/login");
     }
-    conn.query(`SELECT * from User WHERE username = '${username}'`,(err,rs) => {
-      if (err) throw err;
-      else{
+    // conn.query(`SELECT * from User WHERE username = '${username}'`,(err,rs) => {
+    //   if (err) throw err;
+    //   else{
         
-      } 
-    });
+    //   } 
+    // });
   }
   else res.redirect("/register");
 })
@@ -110,7 +124,22 @@ app.get("/logout",(req,res) => {
 })
 
 app.get("/app",mdW.redirectLogin,(req,res) => {
-  res.render("app");
+  // res.render("app");
+  // Find user's friend in database and display it in client side
+  async (() => {
+    let friendList = await (function(){
+      conn.query(`SELECT * FROM friends WHERE user1='${req.session.username}'`,(err, rs) => {
+        if (err) throw err;
+        else return rs;
+      })
+    }());
+    
+    return friendList;
+  })()
+  .then(allRs => {
+    console.log(allRs);
+    res.end();
+  });
 })
 
 io.on("connect",socket => {
