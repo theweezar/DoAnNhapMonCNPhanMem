@@ -9,7 +9,7 @@
   <div class="chat-container">
     <div class="contact-list">
       <ul>
-        <li>
+        {{!-- <li>
           <img class="avatar" src="icon/PngItem_5167304.png" alt="">
           <div class="in4">
             <div class="in4-1">Admin</div>
@@ -29,7 +29,16 @@
             <div class="in4-1">User 2</div>
             <div class="in4-2">Hello world...<span>18:25</span></div>
           </div>
+        </li> --}}
+        {{#each data.friendList}}
+        <li>
+          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
+          <div class="in4">
+            <div class="in4-1">{{this.fullname}}</div>
+            <div class="in4-2">Hello world...<span>18:25</span></div>
+          </div>
         </li>
+        {{/each}}
       </ul>
     </div>
     <div class="chat-box">

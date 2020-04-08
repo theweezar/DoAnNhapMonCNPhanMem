@@ -127,18 +127,22 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   // res.render("app");
   // Find user's friend in database and display it in client side
   // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
-  let pM1 = new Promise((resolve,reject) => {
-    conn.query(`select * from friends where user1 = '${req.session.username}'`,(err, rs) => {
-      if (err) reject(err);
-      else resolve(rs);
-    });
+  let getEverything = async (function(){
+    let friendList = await (new Promise((resolve,reject) => {
+      conn.query(`select * from friends join User on friends.user2 = User.username 
+      where friends.user1 = '${req.session.username}'`,(err, rs) => {
+        if (err) reject(err);
+        else resolve(rs);
+      });
+    }));
+    return {friendList:friendList};
   });
-  pM1
-    .then(rs => {
-      console.log(rs);
-      res.end();
-    })
-    .catch(err => {throw err;});
+  getEverything()
+  .then(rs => {
+    console.log(rs);
+    res.render("app",{data:rs});
+  })
+  .catch(err => {throw err;})
 })
 
 io.on("connect",socket => {
