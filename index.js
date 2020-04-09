@@ -8,8 +8,14 @@ const PORT = process.env.PORT | 8080;
 const session = require("express-session");
 const async = require("asyncawait/async");
 const await = require("asyncawait/await");
-
 const mysql = require("mysql");
+const table = {
+  users: require("./model/users"),
+  friends: require("./model/friends")
+};
+const mdW = require("./middleware.js");
+const s = require("./validation");
+// ================================================================================ //
 const conn = mysql.createConnection({
   host:"localhost",
   user:"root",
@@ -20,9 +26,7 @@ conn.connect(err => {
   if (err) throw err;
   else console.log("Connected to database successfully !");
 })
-
-const mdW = require("./middleware.js");
-const s = require("./validation");
+const userTb = new table.users(conn);
 
 app.use(session({
   secret:"thisisasecret",
@@ -52,29 +56,21 @@ app.get("/login",mdW.redirectApp,(req,res) => {
 })
 
 app.post("/login",(req,res) => {
-  let username = (req.body.username.length >= 9 && req.body.username.length <= 20 ? s.validateString(req.body.username.trim()):"");
+  let username = s.validateString(req.body.username.trim());
   let password = s.validatePassword(req.body.password.trim());
   // Get data from database
-  conn.query(`SELECT * from User WHERE username='${username}'`,(err,rs) => {
-    if (err) throw err;
-    else{
-      if (rs[0].password === password){
-        req.session.username = username;
-        req.session.logged = true;
-        res.redirect("/app");
-        // res.end(`${rs[0]}`);
-      }
-      else res.render("login",{err:true});
+  userTb.getUser(username)
+  .then(user => {
+    if (user.password === password){
+      req.session.username = username;
+      req.session.logged = true;
+      res.redirect("/app");
     }
+    else res.render("login",{err:true});
   })
+  .catch(err => err);
   // Encode input data
   // Check input data if it is corrected or not
-  // if (username === "admin" && password === "admin"){
-  //   req.session.username = username;
-  //   req.session.logged = true;
-  //   res.redirect("/app");
-  // }
-  // res.render("login",{err:true});
 })
 
 app.get("/register",mdW.redirectApp,(req,res) => {
@@ -93,22 +89,12 @@ app.post("/register",(req,res) => {
     firstName !== "" && lastName !== "" && gender !== "" && username !== "" &&
     email !== "" && password !== "" && rePassword !== ""
   ){
+    // Check if all this attributes are existed or not ?
     if (password === rePassword){
       let fullname = `${firstName} ${lastName}`;
-      let query = `INSERT INTO User (username,password,email,fullname,gender) VALUES
-      ('${username}','${password}','${email}','${fullname}',${gender})`;
-      conn.query(query,err => {
-        if (err) throw err;
-        else res.redirect("/login");
-      })
-      // res.end(`${fullname}-${gender}-${username}-${email}-${password}`);
+      userTb.addUser(username,password,email,fullname,gender);
+      res.redirect("/login");
     }
-    // conn.query(`SELECT * from User WHERE username = '${username}'`,(err,rs) => {
-    //   if (err) throw err;
-    //   else{
-        
-    //   } 
-    // });
   }
   else res.redirect("/register");
 })
@@ -135,6 +121,9 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
         else resolve(rs);
       });
     }));
+
+    
+
     return {friendList:friendList};
   });
   getEverything()
