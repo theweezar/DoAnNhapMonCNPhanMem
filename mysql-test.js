@@ -30,3 +30,4 @@ const friendTb = new table.friends(conn);
 // userTb.getUser("admin").then(rs => console.log(rs)).catch(err => err);
 // userTb.getAll().then(rs => console.log(rs)).catch(err => err);
 
+friendTb.getFriends(1).then(rs => console.log(rs)).catch(err => err);
