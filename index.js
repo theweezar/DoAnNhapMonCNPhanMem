@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+const socketIO = require("socket.io");
 const exphbs = require("express-handlebars");
 const PORT = process.env.PORT | 8080;
 const session = require("express-session");
@@ -15,7 +14,7 @@ const table = {
 };
 const mdW = require("./middleware.js");
 const s = require("./validation");
-// ================================================================================ //
+// ======================== Database connection is here ============================ //
 const conn = mysql.createConnection({
   host:"localhost",
   user:"root",
@@ -26,8 +25,10 @@ conn.connect(err => {
   if (err) throw err;
   else console.log("Connected to database successfully !");
 })
+// ============================== Model is here =================================== //
 const userTb = new table.users(conn);
-
+const friendTb = new table.friends(conn);
+// ============================== Session is here ================================= //
 app.use(session({
   secret:"thisisasecret",
   resave:true,
@@ -61,7 +62,8 @@ app.post("/login",(req,res) => {
   // Get data from database
   userTb.getUser(username)
   .then(user => {
-    if (user.password === password){
+    if (user[0].password === password){
+      req.session.userID = user[0].id;
       req.session.username = username;
       req.session.logged = true;
       res.redirect("/app");
@@ -114,16 +116,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   // Find user's friend in database and display it in client side
   // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
   let getEverything = async (function(){
-    let friendList = await (new Promise((resolve,reject) => {
-      conn.query(`select * from friends join User on friends.user2 = User.username 
-      where friends.user1 = '${req.session.username}'`,(err, rs) => {
-        if (err) reject(err);
-        else resolve(rs);
-      });
-    }));
-
-    
-
+    let friendList = await (friendTb.getFriends(req.session.userID));
     return {friendList:friendList};
   });
   getEverything()
@@ -134,15 +127,15 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   .catch(err => {throw err;})
 })
 
-io.on("connect",socket => {
-  socket.on("CONNECT_TO_THE_SERVER",email => {
-    console.log(`${email} is connected to the server !`);
-  });
-  socket.on("DISCONNECT_TO_THE_SERVER",email => {
-    console.log(`${email} is disconnected to the server !`);
-  });
-});
-
-app.listen(PORT,() => {
+const server = app.listen(PORT,() => {
   console.log(`Server is running on PORT: ${PORT} !!!!`);
+})
+
+const io = socketIO(server);
+
+io.on("connection",socket => {
+  socket.on("connect",username => {
+    console.log(`${username} is connected to the server !`);
+  });
+  socket.on("disconnect",() => console.log("Disconnect"))
 })

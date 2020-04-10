@@ -101,6 +101,8 @@
 
 <script>
   $(function(){
+    const socket = io();
+    console.log(socket);
     $("#t_msg").keyup(function(e){ // Type enter and the msg will be sent to server
       if (e.keyCode === 13){
         var msg = $(this).val();
