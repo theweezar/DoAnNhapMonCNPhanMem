@@ -121,8 +121,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   });
   getEverything()
   .then(rs => {
-    console.log(rs);
-    res.render("app",{data:rs});
+    res.render("app",{logged:true,data:rs,myUsername:req.session.username});
   })
   .catch(err => {throw err;})
 })
@@ -134,8 +133,8 @@ const server = app.listen(PORT,() => {
 const io = socketIO(server);
 
 io.on("connection",socket => {
-  socket.on("connect",username => {
-    console.log(`${username} is connected to the server !`);
+  socket.on("CONNECT_TO_SERVER",d => {
+    console.log(`${d.username} is connected to the server !`);
   });
   socket.on("disconnect",() => console.log("Disconnect"))
 })

@@ -79,6 +79,7 @@
             </div>
           </div>
           <!-- ends here -->
+          <a id="clickme" href="/something">click me</a>
         </div>
       </div>
       <div class="box-2">
@@ -98,11 +99,12 @@
     </div>
   </div>
 </div>
-
+{{#if logged}}
 <script>
   $(function(){
     const socket = io();
     console.log(socket);
+    socket.emit("CONNECT_TO_SERVER",{username:"{{myUsername}}"});
     $("#t_msg").keyup(function(e){ // Type enter and the msg will be sent to server
       if (e.keyCode === 13){
         var msg = $(this).val();
@@ -124,11 +126,19 @@
         }
 
         $(this).val("");
+
+
       }
     }).keydown(function(e){ // Avoid creating massive space
       if (e.keyCode === 13){
         $(this).val($(this).val().trim());
       }
     });
+
+    $("#clickme").click(function(e){
+      e.preventDefault();
+      window.location.replace("/something");
+    })
   });
 </script>
+{{/if}}
