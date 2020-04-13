@@ -121,7 +121,12 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   });
   getEverything()
   .then(rs => {
-    res.render("app",{logged:true,data:rs,myUsername:req.session.username});
+    res.render("app",{
+      logged:true,
+      data:rs,
+      myUsername:req.session.username,
+      myID:req.session.userID
+    });
   })
   .catch(err => {throw err;})
 })
@@ -145,7 +150,7 @@ io.on("connection",socket => {
     // userTb.getUser(d.rcvUsername).then(user => {return user.id}).catch(err => {throw err});
     let getMsg = async(function(){
       let friendID = await(userTb.getUser(d.rcvUsername));
-      // let
+      // let 
     })
   });
   socket.on("disconnect",() => console.log("Disconnect"))
