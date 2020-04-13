@@ -22,6 +22,15 @@ class Friends{
       });
     });
   }
+  getChatID(userID1,userID2){
+    return new Promise((resolve, reject) => {
+      this.conn.query(`SELECT * FROM ${tbName.friends} WHERE userId_1 = ${userID1} 
+      AND userId_2 = ${userID2} OR userId_1 = ${userID2} AND userId_2 = ${userID1}`, (err ,rs) => {
+        if (err) reject(err);
+        else resolve(rs);
+      });
+    });
+  }
 }
 
 

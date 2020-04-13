@@ -150,8 +150,15 @@ io.on("connection",socket => {
     // userTb.getUser(d.rcvUsername).then(user => {return user.id}).catch(err => {throw err});
     let getMsg = async(function(){
       let friendID = await(userTb.getUser(d.rcvUsername));
-      // let 
-    })
+      let chatID = await(friendTb.getChatID(d.senderID,friendID[0].id));
+      return chatID;
+    });
+    getMsg().then(rs => {
+      console.log(rs);
+      socket.emit("SEND_RECEIVER_DATA",{
+        chatID:rs
+      });
+    }).catch(err => {throw err});
   });
   socket.on("disconnect",() => console.log("Disconnect"))
 })
