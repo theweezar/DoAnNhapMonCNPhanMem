@@ -78,12 +78,17 @@ body{
 
 .app-container .chat-container .contact-list ul li{
   /* border: 1px solid black; */
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+}
+
+.app-container .chat-container .contact-list ul li a{
+  /* border: 1px solid black; */
   padding: 20px 15px;
   position: relative;
   display: grid;
   grid-template-columns: 25% 75%;
-  border-bottom: 1px solid #e0e0e0;
-  cursor: pointer;
+  text-decoration: none;
 }
 
 .app-container .chat-container .contact-list ul li .avatar{

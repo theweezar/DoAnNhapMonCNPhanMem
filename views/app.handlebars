@@ -9,34 +9,24 @@
   <div class="chat-container">
     <div class="contact-list">
       <ul>
-        {{!-- <li>
-          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
-          <div class="in4">
-            <div class="in4-1">Admin</div>
-            <div class="in4-2">Hello world...<span>18:25</span></div>
-          </div>
-        </li>
         <li>
-          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
-          <div class="in4">
-            <div class="in4-1">User 1</div>
-            <div class="in4-2">Hello world...<span>18:25</span></div>
-          </div>
+          <a href="">
+            <img class="avatar" src="icon/PngItem_5167304.png" alt="">
+            <div class="in4">
+              <div class="in4-1">Admin</div>
+              <div class="in4-2">Hello world...<span>18:25</span></div>
+            </div>
+          </a>
         </li>
-        <li>
-          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
-          <div class="in4">
-            <div class="in4-1">User 2</div>
-            <div class="in4-2">Hello world...<span>18:25</span></div>
-          </div>
-        </li> --}}
         {{#each data.friendList}}
         <li>
-          <img class="avatar" src="icon/PngItem_5167304.png" alt="">
-          <div class="in4">
-            <div class="in4-1">{{this.fullname}}</div>
-            <div class="in4-2">Hello world...<span>18:25</span></div>
-          </div>
+          <a role="link" data-username="{{this.username}}" href="/app/chat/{{this.username}}" rcv-type="user">
+            <img class="avatar" src="icon/PngItem_5167304.png" alt="">
+            <div class="in4">
+              <div class="in4-1">{{this.fullname}}</div>
+              <div class="in4-2">Hello world...<span>18:25</span></div>
+            </div>
+          </a>
         </li>
         {{/each}}
       </ul>
@@ -79,7 +69,7 @@
             </div>
           </div>
           <!-- ends here -->
-          <a id="clickme" href="/something">click me</a>
+          <button id="clickme">click me</button>
         </div>
       </div>
       <div class="box-2">
@@ -101,44 +91,7 @@
 </div>
 {{#if logged}}
 <script>
-  $(function(){
-    const socket = io();
-    console.log(socket);
-    socket.emit("CONNECT_TO_SERVER",{username:"{{myUsername}}"});
-    $("#t_msg").keyup(function(e){ // Type enter and the msg will be sent to server
-      if (e.keyCode === 13){
-        var msg = $(this).val();
-
-        if (msg.trim() !== ""){
-          // Show the msg in chatbox
-          $("#msg_box").append(`
-            <div class="sent-f">
-              <div class="sent-ct">
-                <div class="sent-ct-inb">
-                  <p>${msg}</p>
-                </div>
-              </div>
-              <div class="sent-ava">
-                <img src="icon/PngItem_5167304.png" alt="" srcset="">
-              </div>
-            </div>
-          `);
-        }
-
-        $(this).val("");
-
-
-      }
-    }).keydown(function(e){ // Avoid creating massive space
-      if (e.keyCode === 13){
-        $(this).val($(this).val().trim());
-      }
-    });
-
-    $("#clickme").click(function(e){
-      e.preventDefault();
-      window.location.replace("/something");
-    })
-  });
+  const USERNAME = "{{myUsername}}";
 </script>
+<script src="js/main.js"></script>
 {{/if}}

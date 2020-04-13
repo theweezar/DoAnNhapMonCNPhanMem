@@ -116,7 +116,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   // Find user's friend in database and display it in client side
   // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
   let getEverything = async (function(){
-    let friendList = await (friendTb.getFriends(req.session.userID));
+    let friendList = await(friendTb.getFriends(req.session.userID));
     return {friendList:friendList};
   });
   getEverything()
@@ -124,6 +124,10 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
     res.render("app",{logged:true,data:rs,myUsername:req.session.username});
   })
   .catch(err => {throw err;})
+})
+
+app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
+
 })
 
 const server = app.listen(PORT,() => {
@@ -135,6 +139,14 @@ const io = socketIO(server);
 io.on("connection",socket => {
   socket.on("CONNECT_TO_SERVER",d => {
     console.log(`${d.username} is connected to the server !`);
+  });
+  socket.on("CONNECT_TO_RECEIVER_USER",d => {
+    console.log(d);
+    // userTb.getUser(d.rcvUsername).then(user => {return user.id}).catch(err => {throw err});
+    let getMsg = async(function(){
+      let friendID = await(userTb.getUser(d.rcvUsername));
+      // let
+    })
   });
   socket.on("disconnect",() => console.log("Disconnect"))
 })
