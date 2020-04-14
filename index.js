@@ -10,7 +10,8 @@ const await = require("asyncawait/await");
 const mysql = require("mysql");
 const table = {
   users: require("./model/users"),
-  friends: require("./model/friends")
+  friends: require("./model/friends"),
+  userMsgDetail: require("./model/user_messages_detail")
 };
 const mdW = require("./middleware.js");
 const s = require("./validation");
@@ -28,6 +29,7 @@ conn.connect(err => {
 // ============================== Model is here =================================== //
 const userTb = new table.users(conn);
 const friendTb = new table.friends(conn);
+const userMsgDetail = new table.userMsgDetail(conn);
 // ============================== Session is here ================================= //
 app.use(session({
   secret:"thisisasecret",
@@ -145,20 +147,38 @@ io.on("connection",socket => {
   socket.on("CONNECT_TO_SERVER",d => {
     console.log(`${d.username} is connected to the server !`);
   });
-  socket.on("CONNECT_TO_RECEIVER_USER",d => {
-    console.log(d);
+
+  // ================================== USER TO USER ======================================= //
+
+  socket.on("USER_CONNECT_USER",d => {
     // userTb.getUser(d.rcvUsername).then(user => {return user.id}).catch(err => {throw err});
     let getMsg = async(function(){
-      let friendID = await(userTb.getUser(d.rcvUsername));
-      let chatID = await(friendTb.getChatID(d.senderID,friendID[0].id));
-      return chatID;
+      // let friendID = await(userTb.getUser(d.rcvUsername));
+      // let chatID = await(friendTb.getChatID(d.senderID,friendID[0].id));
+      let historyChat = await(userMsgDetail.getHistory(d.senderUsername,d.rcvUsername));
+      return historyChat;
     });
     getMsg().then(rs => {
-      console.log(rs);
-      socket.emit("SEND_RECEIVER_DATA",{
-        chatID:rs
+      io.emit("HISTORY_DATA_USER_TO_USER",{
+        historyChat:rs
       });
     }).catch(err => {throw err});
   });
+  socket.on("MESSAGE_USER_TO_USER",d => {
+    // userMsgDetail.addMsg({
+      // senderUsername:d.senderUsername,
+      // rcvUsername:d.rcvUsername,
+      // content:d.msg
+    // });
+    console.log(d);
+    io.emit(`MESSAGE_TO_${d.rcvUsername}`,{
+      senderUsername:d.senderUsername,
+      rcvUsername:d.rcvUsername,
+      content:d.msg
+    });
+  })
+
+  // =================================== USER TO GROUP ===================================== //
+
   socket.on("disconnect",() => console.log("Disconnect"))
 })
