@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const socketIO = require("socket.io");
 const exphbs = require("express-handlebars");
-const PORT = process.env.PORT | 8080;
+const PORT = process.env.PORT | 5000;
 const session = require("express-session");
 const async = require("asyncawait/async");
 const await = require("asyncawait/await");
@@ -146,12 +146,14 @@ const io = socketIO(server);
 io.on("connection",socket => {
   socket.on("CONNECT_TO_SERVER",d => {
     console.log(`${d.username} is connected to the server !`);
+    socket.username = d.username;
   });
 
   // ================================== USER TO USER ======================================= //
 
   socket.on("USER_CONNECT_USER",d => {
     // userTb.getUser(d.rcvUsername).then(user => {return user.id}).catch(err => {throw err});
+    // socket.rcvUsername = d.rcvUsername;
     let getMsg = async(function(){
       // let friendID = await(userTb.getUser(d.rcvUsername));
       // let chatID = await(friendTb.getChatID(d.senderID,friendID[0].id));
@@ -159,22 +161,23 @@ io.on("connection",socket => {
       return historyChat;
     });
     getMsg().then(rs => {
-      io.emit("HISTORY_DATA_USER_TO_USER",{
+      io.emit(`HISTORY_USER_USER_${d.senderUsername}`,{
         historyChat:rs
       });
     }).catch(err => {throw err});
   });
   socket.on("MESSAGE_USER_TO_USER",d => {
-    // userMsgDetail.addMsg({
-      // senderUsername:d.senderUsername,
-      // rcvUsername:d.rcvUsername,
-      // content:d.msg
-    // });
+    userMsgDetail.addMsg({
+      senderUsername:d.senderUsername,
+      rcvUsername:d.rcvUsername,
+      content:d.msg,
+      type:"text"
+    });
     console.log(d);
     io.emit(`MESSAGE_TO_${d.rcvUsername}`,{
       senderUsername:d.senderUsername,
       rcvUsername:d.rcvUsername,
-      content:d.msg
+      msg:d.msg
     });
   })
 

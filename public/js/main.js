@@ -1,6 +1,12 @@
+const FRAME = {
+  textArea: $("#t_msg"),
+  msgBox: $("#msg_box"),
+  friendTag: $("a[role='link']") 
+};
+
 function loadMsg(isSender, msg){
   if (isSender){
-    $("#msg_box").append(
+    FRAME.msgBox.append(
       `<div class="sent-f">
         <div class="sent-ct">
           <div class="sent-ct-inb">
@@ -8,16 +14,16 @@ function loadMsg(isSender, msg){
           </div>
         </div>
         <div class="sent-ava">
-          <img src="icon/PngItem_5167304.png" alt="" srcset="">
+          <img src="../../icon/PngItem_5167304.png" alt="" srcset="">
         </div>
       </div>`
     );
   }
   else{
-    $("#msg_box").append(
+    FRAME.msgBox.append(
       `<div class="rcv-f">
         <div class="rcv-ava">
-          <img src="icon/PngItem_5167304.png" alt="" srcset="">
+          <img src="../../icon/PngItem_5167304.png" alt="" srcset="">
         </div>
         <div class="rcv-ct">
           <div class="rcv-ct-inb">
@@ -29,8 +35,16 @@ function loadMsg(isSender, msg){
   }
 }
 
-function loadHistoryChat(history){
-
+function loadHistoryChat(history = []){
+  FRAME.msgBox.html("");
+  history.forEach(msg => {
+    if (msg.sender_username == USERNAME){
+      loadMsg(true,msg.content);
+    }
+    else{
+      loadMsg(false,msg.content);
+    }
+  });
 }
 
 
@@ -38,7 +52,7 @@ $(function(){
   const socket = io();
   // console.log(socket);
   socket.emit("CONNECT_TO_SERVER",{username:USERNAME});
-  $("#t_msg").keyup(function(e){ // Type enter and the msg will be sent to server
+  FRAME.textArea.keyup(function(e){ // Type enter and the msg will be sent to server
     if (e.keyCode === 13){
       var msg = $(this).val().split("\n")[0];
 
@@ -61,13 +75,13 @@ $(function(){
   });
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
     console.log(d);
+    loadMsg(false,d.msg);
   })
 
-  $("a[role='link']").click(function(e){
+  FRAME.friendTag.click(function(e){
     e.preventDefault();
     var url = $(this).attr("href");
     history.pushState("","",url);
-
     if ($(this).attr("rcv-type") === "user"){
       socket.emit("USER_CONNECT_USER",{
         senderUsername:USERNAME,
@@ -78,8 +92,10 @@ $(function(){
     else if($(this).attr("rcv-type") === "group"){
       socket.emit("USER_CONNECT_GROUP",{});
     }
-    socket.on("HISTORY_DATA_USER_TO_USER",function(d){
+    socket.on(`HISTORY_USER_USER_${USERNAME}`,function(d){
       console.log(d);
+      loadHistoryChat(d.historyChat);
+      socket.removeListener(`HISTORY_USER_USER_${USERNAME}`);
     })
   })
 });
