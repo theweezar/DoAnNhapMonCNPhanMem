@@ -57,7 +57,7 @@ class Friends{
     })
   }
   setTimeForLastestMsg(chatID){
-    this.conn.query(`UPDATE ${tbName.friends} SET recent = now() WHERE id = ${chatID}`, err => err);
+    this.conn.query(`UPDATE ${tbName.friends} SET recent = now() WHERE ${tbName.friends}.id = ${chatID}`, err => err);
   }
   
 }

@@ -28,7 +28,7 @@ class UserMessagesDetail{
   addMsg(p = {senderUsername, rcvUsername, content, type:"text"}){
     this.conn.query(`INSERT INTO ${tbName.userMsgDetail} 
     (sender_username, content, rcv_username, type, seen, sent_at) VALUES
-    ('${p.senderUsername}','${p.content}','${p.rcvUsername}','${p.type}',0,now())`, err => {throw err;})
+    ('${p.senderUsername}','${p.content}','${p.rcvUsername}','${p.type}',0,now())`, err => err);
   }
   seenMsg(senderUsername, rcvUsername){
     this.conn.query(`UPDATE ${tbName.userMsgDetail} SET seen = 1 WHERE 

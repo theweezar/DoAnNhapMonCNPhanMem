@@ -136,7 +136,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
 app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
   let getEverything = async (function(){
     // Find user's friend in database and display it in client side
-    let friendList = await(friendTb.getFriends(req.session.userID))
+    let friendList = await(friendTb.getFriends(req.session.userID));
     // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
     let historyChat = await(userMsgDetail.getHistory(req.session.username, req.params.username)).map(msg => {
       if (msg.sender_username == req.session.username) msg.isSender = true;
@@ -149,11 +149,13 @@ app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
     })
     return {
       friendList: friendList,
-      historyChat: historyChat
+      historyChat: historyChat,
+      allLastestMsg: allLastestMsg
     };
   });
   getEverything()
   .then(rs => {
+    console.log(rs.allLastestMsg);
     res.render("app",{
       logged: req.session.logged,
       data: rs,
@@ -199,7 +201,7 @@ io.on("connection",socket => {
     // Change the last texting time
     friendTb.getChatID(d.senderUsername, d.rcvUsername)
     .then(rs => friendTb.setTimeForLastestMsg(rs[0].id))
-    .catch(err => {throw err});
+    .catch(err => {throw err;});
     // Save the msg in database
     userMsgDetail.addMsg({
       senderUsername: d.senderUsername,

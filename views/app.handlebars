@@ -18,13 +18,13 @@
             </div>
           </a>
         </li> --}}
-        {{#each data.friendList}}
+        {{#each data.friendList as |friend index|}}
         <li>
-          <a role="link" data-username="{{this.username}}" href="/app/chat/{{this.username}}" rcv-type="user">
+          <a role="link" data-username="{{friend.username}}" href="/app/chat/{{friend.username}}" rcv-type="user">
             <img class="avatar" src="../../icon/PngItem_5167304.png" alt="">
             <div class="in4">
-              <div class="in4-1">{{this.fullname}}</div>
-              <div class="in4-2">Hello world...<span>18:25</span></div>
+              <div class="in4-1">{{friend.fullname}}</div>
+              <div class="in4-2">{{data.allLastestMsg.[index].content}}<span>18:25</span></div>
             </div>
           </a>
         </li>
