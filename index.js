@@ -155,7 +155,9 @@ app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
   });
   getEverything()
   .then(rs => {
-    console.log(rs.allLastestMsg);
+    rs.friendList.map((friend,i) => {
+      friend.lastestMsg = rs.historyChat[i].content;
+    });
     res.render("app",{
       logged: req.session.logged,
       data: rs,
