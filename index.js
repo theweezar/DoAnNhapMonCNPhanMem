@@ -38,8 +38,14 @@ app.use(session({
 }));
 
 // set defaultlayout is main.handlebars
+exphbs.create({
+  ifEquals:(a, b, opt) => {
+    return (a == b) ? opt.fn(this) : opt.inverse(this);
+  }
+});
 app.engine('handlebars', exphbs({defaultLayout:'main'})); 
 app.set('view engine', 'handlebars');
+
 
 // use public resources such as css, js client side
 app.use(express.static(path.join(__dirname,"public")));
@@ -115,27 +121,43 @@ app.get("/logout",(req,res) => {
 
 app.get("/app",mdW.redirectLogin,(req,res) => {
   // res.render("app");
-  // Find user's friend in database and display it in client side
-  // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
   let getEverything = async (function(){
-    let friendList = await(friendTb.getFriends(req.session.userID));
-    return {friendList:friendList};
+    // The lastest texted friend
+    let tLTF = await(friendTb.getTheLastestTextedFriend(req.session.userID));
+    return tLTF;
   });
   getEverything()
   .then(rs => {
-    // res.render("app",{
-    //   logged:req.session.logged,
-    //   data:rs,
-    //   myUsername:req.session.username,
-    //   myID:req.session.userID
-    // });
     res.redirect(`/app/chat/${rs[0].username}`);
   })
   .catch(err => {throw err;});
 })
 
 app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
-
+  let getEverything = async (function(){
+    // Find user's friend in database and display it in client side
+    let friendList = await(friendTb.getFriends(req.session.userID))
+    // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
+    let historyChat = await(userMsgDetail.getHistory(req.session.username,req.params.username)).map(msg => {
+      if (msg.sender_username == req.session.username) msg.isSender = true;
+      else msg.sender = false;
+      return msg;
+    })
+    return {
+      friendList:friendList,
+      historyChat:historyChat
+    };
+  });
+  getEverything()
+  .then(rs => {
+    res.render("app",{
+      logged:req.session.logged,
+      data:rs,
+      myUsername:req.session.username,
+      myID:req.session.userID
+    })
+  })
+  .catch(err => {throw err;});
 })
 
 const server = app.listen(PORT,() => {
