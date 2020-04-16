@@ -123,14 +123,15 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   });
   getEverything()
   .then(rs => {
-    res.render("app",{
-      logged:true,
-      data:rs,
-      myUsername:req.session.username,
-      myID:req.session.userID
-    });
+    // res.render("app",{
+    //   logged:req.session.logged,
+    //   data:rs,
+    //   myUsername:req.session.username,
+    //   myID:req.session.userID
+    // });
+    res.redirect(`/app/chat/${rs[0].username}`);
   })
-  .catch(err => {throw err;})
+  .catch(err => {throw err;});
 })
 
 app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
@@ -150,13 +151,14 @@ io.on("connection",socket => {
   });
 
   // ================================== USER TO USER ======================================= //
-
+  // 1.
   socket.on("USER_CONNECT_USER",d => {
     // userTb.getUser(d.rcvUsername).then(user => {return user.id}).catch(err => {throw err});
     // socket.rcvUsername = d.rcvUsername;
     let getMsg = async(function(){
       // let friendID = await(userTb.getUser(d.rcvUsername));
       // let chatID = await(friendTb.getChatID(d.senderID,friendID[0].id));
+      // Get the history chat between you and your friend
       let historyChat = await(userMsgDetail.getHistory(d.senderUsername,d.rcvUsername));
       return historyChat;
     });
@@ -166,7 +168,13 @@ io.on("connection",socket => {
       });
     }).catch(err => {throw err});
   });
+  // 2.
   socket.on("MESSAGE_USER_TO_USER",d => {
+    // Change the last texting time
+    friendTb.getChatID(d.senderUsername, d.rcvUsername)
+    .then(rs => friendTb.setTimeForLastestMsg(rs[0].id))
+    .catch(err => {throw err});
+    // Save the msg in database
     userMsgDetail.addMsg({
       senderUsername:d.senderUsername,
       rcvUsername:d.rcvUsername,
@@ -174,6 +182,7 @@ io.on("connection",socket => {
       type:"text"
     });
     console.log(d);
+    // Send the msg to the receiver
     io.emit(`MESSAGE_TO_${d.rcvUsername}`,{
       senderUsername:d.senderUsername,
       rcvUsername:d.rcvUsername,
