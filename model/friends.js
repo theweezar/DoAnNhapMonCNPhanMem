@@ -56,14 +56,10 @@ class Friends{
       })
     })
   }
-  // setTimeForLastestMsg(userID1, userID2){
-  //   this.conn.query(`UPDATE ${tbName.friends} SET recent = now() WHERE userId_1 = ${userID1} 
-  //   AND userId_2 = ${userID2} OR userId_1 = ${userID2} AND userId_2 = ${userID1} `
-  //   ,err => {throw err;})
-  // }
   setTimeForLastestMsg(chatID){
     this.conn.query(`UPDATE ${tbName.friends} SET recent = now() WHERE id = ${chatID}`, err => err);
   }
+  
 }
 
 

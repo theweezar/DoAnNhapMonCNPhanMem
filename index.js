@@ -138,23 +138,27 @@ app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
     // Find user's friend in database and display it in client side
     let friendList = await(friendTb.getFriends(req.session.userID))
     // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
-    let historyChat = await(userMsgDetail.getHistory(req.session.username,req.params.username)).map(msg => {
+    let historyChat = await(userMsgDetail.getHistory(req.session.username, req.params.username)).map(msg => {
       if (msg.sender_username == req.session.username) msg.isSender = true;
       else msg.sender = false;
       return msg;
     })
+    // Find all the lastest unseen or seen messages of you and your friends then display it on screen
+    let allLastestMsg = friendList.map(friend => {
+      return await(userMsgDetail.getLastestMsg(req.session.username, friend.username));
+    })
     return {
-      friendList:friendList,
-      historyChat:historyChat
+      friendList: friendList,
+      historyChat: historyChat
     };
   });
   getEverything()
   .then(rs => {
     res.render("app",{
-      logged:req.session.logged,
-      data:rs,
-      myUsername:req.session.username,
-      myID:req.session.userID
+      logged: req.session.logged,
+      data: rs,
+      myUsername: req.session.username,
+      myID: req.session.userID
     })
   })
   .catch(err => {throw err;});
@@ -181,7 +185,7 @@ io.on("connection",socket => {
       // let friendID = await(userTb.getUser(d.rcvUsername));
       // let chatID = await(friendTb.getChatID(d.senderID,friendID[0].id));
       // Get the history chat between you and your friend
-      let historyChat = await(userMsgDetail.getHistory(d.senderUsername,d.rcvUsername));
+      let historyChat = await(userMsgDetail.getHistory(d.senderUsername, d.rcvUsername));
       return historyChat;
     });
     getMsg().then(rs => {
@@ -198,17 +202,17 @@ io.on("connection",socket => {
     .catch(err => {throw err});
     // Save the msg in database
     userMsgDetail.addMsg({
-      senderUsername:d.senderUsername,
-      rcvUsername:d.rcvUsername,
-      content:d.msg,
-      type:"text"
+      senderUsername: d.senderUsername,
+      rcvUsername: d.rcvUsername,
+      content: d.msg,
+      type: "text"
     });
     console.log(d);
     // Send the msg to the receiver
     io.emit(`MESSAGE_TO_${d.rcvUsername}`,{
-      senderUsername:d.senderUsername,
-      rcvUsername:d.rcvUsername,
-      msg:d.msg
+      senderUsername: d.senderUsername,
+      rcvUsername: d.rcvUsername,
+      msg: d.msg
     });
   })
 
