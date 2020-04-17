@@ -25,7 +25,7 @@ $(function(){
   });
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
     console.log(d);
-    loadMsg(false,d.msg);
+    loadMsg(false,d);
   })
 
   FRAME.friendTag.click(function(e){

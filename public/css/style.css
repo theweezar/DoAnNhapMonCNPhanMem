@@ -99,10 +99,13 @@ body{
 
 .app-container .chat-container .contact-list ul li .in4 .in4-1{
   font-weight: bold;
+  color: black;
 }
 
 .app-container .chat-container .contact-list ul li .in4 .in4-2{
   margin-top: 10px;
+  color: gray;
+  font-size: 85%;
 }
 
 .app-container .chat-container .contact-list ul li .in4 .in4-2 span{

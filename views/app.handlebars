@@ -24,7 +24,11 @@
             <img class="avatar" src="../../icon/PngItem_5167304.png" alt="">
             <div class="in4">
               <div class="in4-1">{{friend.fullname}}</div>
-              <div class="in4-2">{{friend.lastestMsg}}<span>18:25</span></div>
+              {{#if friend.seenMsg}}
+              <div class="in4-2">{{friend.lastestSender}}{{friend.lastestMsg}}<span>18:25</span></div>
+              {{else}}
+              <div style="font-weight: bold; color: black;" class="in4-2">{{friend.lastestSender}}{{friend.lastestMsg}}<span>18:25</span></div>
+              {{/if}}
             </div>
           </a>
         </li>

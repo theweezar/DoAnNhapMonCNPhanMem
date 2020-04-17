@@ -1,10 +1,10 @@
-function loadMsg(isSender, msg){
+function loadMsg(isSender, d){
   if (isSender){
     FRAME.msgBox.append(
       `<div class="sent-f">
         <div class="sent-ct">
           <div class="sent-ct-inb">
-            <p>${msg}</p>
+            <p>${d.content}</p>
           </div>
         </div>
         <div class="sent-ava">
@@ -21,7 +21,7 @@ function loadMsg(isSender, msg){
         </div>
         <div class="rcv-ct">
           <div class="rcv-ct-inb">
-            <p>${msg}</p>
+            <p>${d.content}</p>
           </div>
         </div>
       </div>`
@@ -31,12 +31,12 @@ function loadMsg(isSender, msg){
 
 function loadHistoryChat(history = []){
   FRAME.msgBox.html("");
-  history.forEach(msg => {
-    if (msg.sender_username == USERNAME){
-      loadMsg(true,msg.content);
+  history.forEach(d => {
+    if (d.sender_username == USERNAME){
+      loadMsg(true,d);
     }
     else{
-      loadMsg(false,msg.content);
+      loadMsg(false,d);
     }
   });
 }

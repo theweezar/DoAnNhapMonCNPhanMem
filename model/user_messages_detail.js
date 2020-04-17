@@ -19,7 +19,7 @@ class UserMessagesDetail{
     return new Promise((resolve, reject) => {
       this.conn.query(`SELECT * FROM ${tbName.userMsgDetail} WHERE sender_username = '${username_1}'
       AND rcv_username = '${username_2}' OR sender_username = '${username_2}'
-      AND rcv_username = '${username_1}' ORDER BY sent_at DESC LIMIT 1`, (err, rs) => {
+      AND rcv_username = '${username_1}' ORDER BY id DESC LIMIT 1`, (err, rs) => {
         if (err) reject(err);
         else resolve(rs);
       })
@@ -32,7 +32,8 @@ class UserMessagesDetail{
   }
   seenMsg(senderUsername, rcvUsername){
     this.conn.query(`UPDATE ${tbName.userMsgDetail} SET seen = 1 WHERE 
-    sender_username = '${senderUsername}' AND rcv_username = '${rcvUsername}'`,err => {throw err;})
+    sender_username = '${senderUsername}' AND rcv_username = '${rcvUsername}' 
+    AND seen = 0`,err => err)
   }
 }
 
