@@ -8,7 +8,18 @@ $(function(){
 
       if (msg.trim() !== ""){
         // Show the msg in chatbox
-        loadMsg(true,msg);
+        // Everytime we send a msg to someone, we have to load it on MessageBoxChat
+        // and load the lastest msg in the friend tag
+        loadMsg(true,{
+          senderUsername: USERNAME,
+          msg:msg
+        });
+        loadLastestMsgInFriendTag({
+          senderUsername: USERNAME,
+          rcvUsername: window.location.pathname.split("/")[3],
+          msg: msg
+        })
+        // SEND
         socket.emit("MESSAGE_USER_TO_USER",{
           senderUsername: USERNAME,
           rcvUsername: window.location.pathname.split("/")[3],
@@ -23,9 +34,23 @@ $(function(){
       $(this).val($(this).val().trim());
     }
   });
+  // RECEIVE
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
     console.log(d);
-    loadMsg(false,d);
+    // if sender is connecting with this account, we will load the msg in MessageBoxChat
+    if (d.senderUsername === window.location.pathname.split("/")[3]){
+      loadMsg(false,{
+        senderUsername: d.senderUsername,
+        rcvUsername: d.rcvUsername,
+        msg: d.msg
+      });
+    }
+    // if not, we just need to load the lastestMsg in friend tag
+    loadLastestMsgInFriendTag({
+      senderUsername: d.senderUsername,
+      rcvUsername: d.rcvUsername,
+      msg: d.msg
+    });
   })
 
   FRAME.friendTag.click(function(e){
@@ -38,6 +63,10 @@ $(function(){
         senderID:ID,
         rcvUsername:url.split("/")[3]
       });
+      socket.emit("MAKE_MSG_SEEN",{
+        senderUsername:USERNAME,
+        rcvUsername:url.split("/")[3]
+      });
     }
     else if($(this).attr("rcv-type") === "group"){
       socket.emit("USER_CONNECT_GROUP",{});
@@ -46,6 +75,11 @@ $(function(){
       console.log(d);
       loadHistoryChat(d.historyChat);
       socket.removeListener(`HISTORY_USER_USER_${USERNAME}`);
-    })
+    });
+    // If there are some msg which aren't read, we will make it "seen"
+    $(`a[role='link'][data-username='${url.split("/")[3]}']`)
+    .find("#lst-msg")
+    .removeAttr("style");
   })
+  console.log(FRAME.friendTag);
 });

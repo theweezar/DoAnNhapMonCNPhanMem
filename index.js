@@ -215,6 +215,10 @@ io.on("connection",socket => {
     }).catch(err => {throw err});
   });
   // 2.
+  socket.on("MAKE_MSG_SEEN",d => {
+    userMsgDetail.seenMsg(socket.username,d.rcvUsername);
+  });
+  // 3.
   socket.on("MESSAGE_USER_TO_USER",d => {
     // Change the last texting time
     friendTb.getChatID(d.senderUsername, d.rcvUsername)
