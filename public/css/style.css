@@ -212,6 +212,10 @@ body{
   position: relative;
 }
 
+.app-container .chat-container .chat-box .box-2 .f-icon input{
+  display: none;
+}
+
 .app-container .chat-container .chat-box .box-2 .f-icon img{
   filter: invert(57%) sepia(30%) saturate(0%) hue-rotate(210deg) brightness(83%) contrast(82%);
   cursor: pointer;

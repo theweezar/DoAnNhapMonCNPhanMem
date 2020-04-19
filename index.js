@@ -102,14 +102,14 @@ app.post("/register",(req,res) => {
     // Check if all this attributes are existed or not ?
     if (password === rePassword){
       let fullname = `${firstName} ${lastName}`;
-      userTb.addUser(username,password,email,fullname,gender);
+      userTb.addUser(username, password, email, fullname, gender);
       res.redirect("/login");
     }
   }
   else res.redirect("/register");
 })
 
-app.get("/logout",(req,res) => {
+app.get("/logout", (req, res) => {
   if (req.session.logged){
     req.session.destroy(err => {
       if (err) throw err;
@@ -133,7 +133,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   .catch(err => {throw err;});
 })
 
-app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
+app.get("/app/chat/:username",mdW.redirectLogin, (req, res) => {
   let getData = async (function(){
     // Find user's friend in database and display it in client side
     let friendList = await(friendTb.getFriends(req.session.userID));
@@ -156,7 +156,7 @@ app.get("/app/chat/:username",mdW.redirectLogin,(req,res) => {
   getData()
   .then(rs => {
     // console.log(rs.allLastestMsg);
-    rs.friendList.map((friend,i) => {
+    rs.friendList.map((friend, i) => {
       friend.seenMsg = true;
       if (rs.allLastestMsg[i][0] !== undefined){
         friend.lastestMsg = rs.allLastestMsg[i][0].content;
@@ -194,7 +194,7 @@ io.on("connection",socket => {
   });
 
   // ================================== USER TO USER ======================================= //
-  // 1.
+  // 1. Click on friend tag to connect to chat box 1 - 1
   socket.on("USER_CONNECT_USER",d => {
     // userTb.getUser(d.rcvUsername).then(user => {return user.id}).catch(err => {throw err});
     // socket.rcvUsername = d.rcvUsername;
@@ -210,15 +210,16 @@ io.on("connection",socket => {
     getMsg().then(rs => {
       console.log(rs);
       io.emit(`HISTORY_USER_USER_${d.senderUsername}`,{
-        historyChat:rs
+        historyChat: rs
       });
     }).catch(err => {throw err});
   });
-  // 2.
+  // 2. When you click to connect to someone, all the msg which isn't seen from your friend
+  // will be made "seen"
   socket.on("MAKE_MSG_SEEN",d => {
     userMsgDetail.seenMsg(socket.username,d.rcvUsername);
   });
-  // 3.
+  // 3. When you send to someone a msg, and that msg has to be send to specific user
   socket.on("MESSAGE_USER_TO_USER",d => {
     // Change the last texting time
     friendTb.getChatID(d.senderUsername, d.rcvUsername)

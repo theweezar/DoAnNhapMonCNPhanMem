@@ -52,7 +52,7 @@ $(function(){
       msg: d.msg
     });
   })
-
+  // Connect to someone throught a chat box
   FRAME.friendTag.click(function(e){
     e.preventDefault();
     var url = $(this).attr("href");
@@ -81,5 +81,16 @@ $(function(){
     .find("#lst-msg")
     .removeAttr("style");
   })
-  console.log(FRAME.friendTag);
+  // UploadBtn is clicked
+  $("#fileUpload").change(function(){
+    let reader = new FileReader();
+    if (this.files[0]){
+      reader.readAsDataURL(this.files[0]);
+    }
+    reader.onloadend = () => {
+      // console.log(reader.result);
+      console.log(this.files[0].size);
+    }
+    console.log("yes");
+  })
 });

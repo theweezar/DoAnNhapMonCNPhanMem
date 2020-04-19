@@ -105,7 +105,10 @@
           <img width="25px" src="../../icon/smile-solid.svg" alt="" srcset="">
         </div>
         <div class="f-icon">
-          <img width="20px" src="../../icon/file-solid.svg" alt="" srcset="">
+          <input type="file" name="fileUpload" id="fileUpload" accept="audio/*,video/*,image/*">
+          <label for="fileUpload">
+            <img width="20px" src="../../icon/file-solid.svg" alt="" srcset="">
+          </label>
         </div>
         <div class="t-field">
           <textarea name="" id="t_msg"></textarea>
@@ -123,6 +126,7 @@
   const ID = "{{myID}}";
 </script>
 <script src="../../js/variables.js"></script>
-<script src="../../js/function.js"></script>
+<script src="../../js/displayHTML.js"></script>
+<script src="../../js/validateFile.js"></script>
 <script src="../../js/process.js"></script>
 {{/if}}
