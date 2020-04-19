@@ -112,12 +112,18 @@
         </div>
         <div class="t-field">
           <textarea name="" id="t_msg"></textarea>
+          {{!-- <img style="width: 10%; height: auto;" src="../../img/testImg.jpg" alt="" srcset=""> --}}
         </div>
         <div class="f-icon">
           <img id="s_btn" width="25px" src="../../icon/paper-plane-solid.svg" alt="" srcset="">
         </div>
       </div>
     </div>
+  </div>
+  <div style="display: none;" id="previewUpload" class="prev-upl-f">
+    <img id="discardBtn" class="discard-btn" style="width: 30px; height: auto;" src="../../icon/x-icon-png-17.png" alt="" srcset="">
+    <img id="previewFile" class="file" style="width: 50%; height: auto;" src="" alt="" srcset="">
+    <div id="sendFile" class="send-file-btn">Send</div>
   </div>
 </div>
 {{#if logged}}

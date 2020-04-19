@@ -34,6 +34,7 @@ $(function(){
       $(this).val($(this).val().trim());
     }
   });
+  // ====================================================================================
   // RECEIVE
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
     console.log(d);
@@ -52,6 +53,7 @@ $(function(){
       msg: d.msg
     });
   })
+  // ====================================================================================
   // Connect to someone throught a chat box
   FRAME.friendTag.click(function(e){
     e.preventDefault();
@@ -81,16 +83,29 @@ $(function(){
     .find("#lst-msg")
     .removeAttr("style");
   })
+  // ====================================================================================
   // UploadBtn is clicked
   $("#fileUpload").change(function(){
     let reader = new FileReader();
+    
     if (this.files[0]){
       reader.readAsDataURL(this.files[0]);
     }
     reader.onloadend = () => {
-      // console.log(reader.result);
-      console.log(this.files[0].size);
+      console.log(this.files[0]);
+      // This file must be smaller than 25mb
+      if (this.files[0].size < 1024 * 1024 * 25){
+        FRAME.previewUploadFrame.removeAttr("style");
+        FRAME.previewUploadFile.attr("src",reader.result);
+        FRAME.discardUploadFile.click(function(e){
+          FRAME.previewUploadFrame.css({"display":"none"});
+          FRAME.previewUploadFile.attr("src","");
+        });
+        FRAME.sendUploadFile.click(function(e){
+          
+        })
+      }
     }
-    console.log("yes");
+    
   })
 });
