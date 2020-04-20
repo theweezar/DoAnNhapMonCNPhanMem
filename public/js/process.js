@@ -10,15 +10,6 @@ $(function(){
         // Show the msg in chatbox
         // Everytime we send a msg to someone, we have to load it on MessageBoxChat
         // and load the lastest msg in the friend tag
-        loadMsg(true,{
-          senderUsername: USERNAME,
-          msg:msg
-        });
-        loadLastestMsgInFriendTag({
-          senderUsername: USERNAME,
-          rcvUsername: window.location.pathname.split("/")[3],
-          msg: msg
-        })
         // SEND
         socket.emit("MESSAGE_USER_TO_USER",{
           senderUsername: USERNAME,
@@ -35,7 +26,21 @@ $(function(){
     }
   });
   // ====================================================================================
-  // RECEIVE
+  // RESPONSE TO ME
+  socket.on(`RESPONSE_TO_${USERNAME}`,function(d){
+    loadMsg(true,{
+      senderUsername: USERNAME,
+      msg: d.msg,
+      type: d.type
+    });
+    loadLastestMsgInFriendTag({
+      senderUsername: USERNAME,
+      rcvUsername: window.location.pathname.split("/")[3],
+      msg: d.msg,
+      type: d.type
+    });
+  })
+  // RECEIVE FROM SOMEONE
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
     console.log(d);
     // if sender is connecting with this account, we will load the msg in MessageBoxChat
@@ -43,14 +48,16 @@ $(function(){
       loadMsg(false,{
         senderUsername: d.senderUsername,
         rcvUsername: d.rcvUsername,
-        msg: d.msg
+        msg: d.msg,
+        type: d.type
       });
     }
     // if not, we just need to load the lastestMsg in friend tag
     loadLastestMsgInFriendTag({
       senderUsername: d.senderUsername,
       rcvUsername: d.rcvUsername,
-      msg: d.msg
+      msg: d.msg,
+      type: d.type
     });
   })
   // ====================================================================================
@@ -87,22 +94,34 @@ $(function(){
   // UploadBtn is clicked
   $("#fileUpload").change(function(){
     let reader = new FileReader();
-    
+    const fileExtList = ["jpg","png","jpeg"];
     if (this.files[0]){
       reader.readAsDataURL(this.files[0]);
     }
     reader.onloadend = () => {
       console.log(this.files[0]);
+      // console.log(reader.result);
+      let base64file = reader.result;
+      let fileExt = this.files[0].name.match(/\w+$/g)[0];
+      let type = "";
       // This file must be smaller than 25mb
       if (this.files[0].size < 1024 * 1024 * 25){
         FRAME.previewUploadFrame.removeAttr("style");
-        FRAME.previewUploadFile.attr("src",reader.result);
+        if (fileExtList.includes(fileExt)) FRAME.previewUploadFile.attr("src",reader.result);
+        else FRAME.previewUploadFile.attr("src","../../icon/Filetype-Docs-icon.png");
         FRAME.discardUploadFile.click(function(e){
           FRAME.previewUploadFrame.css({"display":"none"});
           FRAME.previewUploadFile.attr("src","");
         });
         FRAME.sendUploadFile.click(function(e){
-          
+          FRAME.previewUploadFrame.css({"display":"none"});
+          FRAME.previewUploadFile.attr("src","");
+          socket.emit("FILE_USER_TO_USER",{
+            senderUsername: USERNAME,
+            rcvUsername: window.location.pathname.split("/")[3],
+            base64file: base64file,
+            fileExt: fileExt
+          });
         })
       }
     }

@@ -172,6 +172,11 @@ body{
   padding: 5px 10px;
 }
 
+.app-container .chat-container .chat-box .box-1 .msg-box .sent-f .sent-ct .sent-ct-inb img{
+  width: 100%;
+  height: auto;
+}
+
 .app-container .chat-container .chat-box .box-1 .msg-box .rcv-f{
   display: grid;
   grid-template-columns: 10% 90%;
@@ -201,6 +206,11 @@ body{
   border-radius: 5px;
   margin: 0;
   padding: 5px 10px;
+}
+
+.app-container .chat-container .chat-box .box-1 .msg-box .rcv-f .rcv-ct .rcv-ct-inb img{
+  width: 100%;
+  height: auto;
 }
 
 .app-container .chat-container .chat-box .box-2{

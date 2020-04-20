@@ -38,7 +38,18 @@
     <div class="chat-box">
       <div class="box-1">
         <div id="msg_box" class="msg-box">
-          {{!-- <!-- 1 sent message frame starts here -->
+          {{!-- <!-- 2 sent message frame starts here -->
+          <div class="sent-f">
+            <div class="sent-ct">
+              <div class="sent-ct-inb">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate beatae, magnam earum vero nam nulla amet distinctio iure harum eligendi sed omnis quasi officia facilis explicabo, laudantium quod ipsam soluta.</p>
+              </div>
+            </div>
+            <div class="sent-ava">
+              <img src="icon/PngItem_5167304.png" alt="" srcset="">
+            </div>
+          </div>
+          
           <div class="sent-f">
             <div class="sent-ct">
               <div class="sent-ct-inb">
@@ -50,17 +61,6 @@
             </div>
           </div>
           <!-- ends here -->
-          <div class="sent-f">
-            <div class="sent-ct">
-              <div class="sent-ct-inb">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate beatae, magnam earum vero nam nulla amet distinctio iure harum eligendi sed omnis quasi officia facilis explicabo, laudantium quod ipsam soluta.</p>
-              </div>
-            </div>
-            <div class="sent-ava">
-              <img src="icon/PngItem_5167304.png" alt="" srcset="">
-            </div>
-          </div>
-
           <!-- 1 received message frame starts here -->
           <div class="rcv-f">
             <div class="rcv-ava">
@@ -72,13 +72,30 @@
               </div>
             </div>
           </div>
+          <!-- ends here -->
+          <!-- 1 received image frame starts here -->
+          <div class="rcv-f">
+            <div class="rcv-ava">
+              <img src="icon/PngItem_5167304.png" alt="" srcset="">
+            </div>
+            <div class="rcv-ct">
+              <div class="rcv-ct-inb">
+                <img src="../../img/testImg.jpg" alt="" srcset="">
+              </div>
+            </div>
+          </div>
           <!-- ends here --> --}}
           {{#each data.historyChat}}
             {{#if this.isSender}}
               <div class="sent-f">
                 <div class="sent-ct">
                   <div class="sent-ct-inb">
+                    {{#if this.text}}
                     <p>{{this.content}}</p>
+                    {{/if}}
+                    {{#if this.img}}
+                    <img src="../../{{this.content}}" alt="" srcset="">
+                    {{/if}}
                   </div>
                 </div>
                 <div class="sent-ava">
@@ -92,7 +109,12 @@
                 </div>
                 <div class="rcv-ct">
                   <div class="rcv-ct-inb">
+                    {{#if this.text}}
                     <p>{{this.content}}</p>
+                    {{/if}}
+                    {{#if this.img}}
+                    <img src="../../{{this.content}}" alt="" srcset="">
+                    {{/if}}
                   </div>
                 </div>
               </div>
@@ -105,7 +127,7 @@
           <img width="25px" src="../../icon/smile-solid.svg" alt="" srcset="">
         </div>
         <div class="f-icon">
-          <input type="file" name="fileUpload" id="fileUpload" accept="audio/*,video/*,image/*">
+          <input type="file" name="fileUpload" id="fileUpload" accept="audio/*,video/*,image/*,.pdf,.docx">
           <label for="fileUpload">
             <img width="20px" src="../../icon/file-solid.svg" alt="" srcset="">
           </label>

@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const socketIO = require("socket.io");
 const exphbs = require("express-handlebars");
+const fs = require("fs");
 const PORT = process.env.PORT | 5000;
 const session = require("express-session");
 const async = require("asyncawait/async");
@@ -51,7 +52,8 @@ app.set('view engine', 'handlebars');
 app.use(express.static(path.join(__dirname,"public")));
 // use socket module for client side 
 app.use(express.static(path.join(__dirname,"node_modules","socket.io-client","dist")));
-// 
+// use to load file which sent by user
+app.use(express.static(path.join(__dirname,"files")));
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
@@ -138,10 +140,12 @@ app.get("/app/chat/:username",mdW.redirectLogin, (req, res) => {
     // Find user's friend in database and display it in client side
     let friendList = await(friendTb.getFriends(req.session.userID));
     // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
-    let historyChat = await(userMsgDetail.getHistory(req.session.username, req.params.username)).map(msg => {
-      if (msg.sender_username == req.session.username) msg.isSender = true;
-      else msg.sender = false;
-      return msg;
+    let historyChat = await(userMsgDetail.getHistory(req.session.username, req.params.username)).map(row => {
+      if (row.sender_username == req.session.username) row.isSender = true;
+      else row.isSender = false;
+      if (row.type == "text") row.text = true;
+      else if (row.type == "img") row.img = true;
+      return row;
     })
     // Find all the lastest unseen or seen messages of you and your friends then display it on screen
     let allLastestMsg = friendList.map(friend => {
@@ -159,7 +163,7 @@ app.get("/app/chat/:username",mdW.redirectLogin, (req, res) => {
     rs.friendList.map((friend, i) => {
       friend.seenMsg = true;
       if (rs.allLastestMsg[i][0] !== undefined){
-        friend.lastestMsg = rs.allLastestMsg[i][0].content;
+        friend.lastestMsg = rs.allLastestMsg[i][0].type == "text" ? rs.allLastestMsg[i][0].content : "File";
         friend.lastestSender = `${rs.allLastestMsg[i][0].sender_username}: `;
         // if seen = false then css will highlight the message
         if (rs.allLastestMsg[i][0].sender_username !== req.session.username){
@@ -208,7 +212,7 @@ io.on("connection",socket => {
       return historyChat;
     });
     getMsg().then(rs => {
-      console.log(rs);
+      // console.log(rs);
       io.emit(`HISTORY_USER_USER_${d.senderUsername}`,{
         historyChat: rs
       });
@@ -233,15 +237,62 @@ io.on("connection",socket => {
       type: "text"
     });
     console.log(d);
-    // Send the msg to the receiver
-    io.emit(`MESSAGE_TO_${d.rcvUsername}`,{
+    let sendData = {
       senderUsername: d.senderUsername,
       rcvUsername: d.rcvUsername,
-      msg: d.msg
+      msg: d.msg,
+      type: "text"
+    };
+    // Send the msg to the receiver
+    io.emit(`MESSAGE_TO_${d.rcvUsername}`,sendData);
+    // Responce the msg to sender
+    io.emit(`RESPONSE_TO_${d.senderUsername}`,sendData);
+  });
+  // 4. When you send an image or a file to specific user
+  socket.on("FILE_USER_TO_USER",d => {
+    // base64file is the data that sent from client-side
+    let base64file = d.base64file.split(';base64,').pop();
+    let isImg = ["jpg","png","jpeg"].includes(d.fileExt);
+    let link = isImg ? "img":"others";
+    // genName is a Promise that generate random name for that base64file
+    let genName = Promise.resolve(
+      // construct a array with length = 10. Then fill it with undifine value
+      // After that, give every signle element in that array a char from ascii (122-97)(a-z)
+      new Array(10).fill().map(c => c = String.fromCharCode(Math.floor(Math.random()*(122+1-97)+97)))
+    );
+    genName.then(rs => {
+      let newName = rs.toString().replace(/,/g,"");
+      // Create that base64file with the name that created above, then save it in folder "files"
+      fs.writeFile(
+        path.join(__dirname,"files",link,`${newName}.${d.fileExt}`), 
+        base64file, 
+        {encoding: 'base64'}, 
+        function(err) {
+          if (err) console.log(err);
+          else{
+            // We just need to save the link of that file which created above
+            userMsgDetail.addMsg({
+              senderUsername: d.senderUsername,
+              rcvUsername: d.rcvUsername,
+              content: `${link}/${newName}.${d.fileExt}`,
+              type:"img"
+            });
+            let sendData = {
+              senderUsername: d.senderUsername,
+              rcvUsername: d.rcvUsername,
+              msg: `${link}/${newName}.${d.fileExt}`,
+              type: "img"
+            }
+            // Send the image to the receiver
+            io.emit(`MESSAGE_TO_${d.rcvUsername}`, sendData);
+            // Response the image to the sender
+            io.emit(`RESPONSE_TO_${d.senderUsername}`, sendData);
+          }
+      });
     });
   })
 
   // =================================== USER TO GROUP ===================================== //
 
   socket.on("disconnect",() => console.log("Disconnect"))
-})
+});
