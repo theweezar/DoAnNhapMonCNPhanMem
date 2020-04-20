@@ -19,13 +19,32 @@ class Users{
       });
     });
   }
-  getUser(username){
-    return new Promise((resolve,reject) => {
-      this.conn.query(`SELECT * FROM ${tbName.users} WHERE username='${username}'`, (err, rs) => {
-        if (err) reject(err);
-        else resolve(rs);
+  getUser(d = {username, email}){
+    if (d.username != undefined){
+      return new Promise((resolve,reject) => {
+        this.conn.query(`SELECT * FROM ${tbName.users} WHERE username='${d.username}'`, (err, rs) => {
+          if (err) reject(err);
+          else resolve(rs);
+        });
       });
-    });
+    }
+    else if (d.email != undefined){
+      return new Promise((resolve,reject) => {
+        this.conn.query(`SELECT * FROM ${tbName.users} WHERE email='${d.email}'`, (err, rs) => {
+          if (err) reject(err);
+          else resolve(rs);
+        });
+      });
+    }
+    else{
+      return new Promise((resolve,reject) => {
+        this.conn.query(`SELECT * FROM ${tbName.users} WHERE username='${d.username}'
+        AND email='${d.email}'`, (err, rs) => {
+          if (err) reject(err);
+          else resolve(rs);
+        });
+      });
+    }
   }
 }
 

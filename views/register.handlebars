@@ -30,3 +30,19 @@
     </div>
   </form>
 </div>
+
+{{#if usernameErr}}
+<script>
+  alert("Your username is existed in database !!");
+</script>
+{{/if}}
+<script>
+  alert("Your email is existed in database !!");
+</script>
+{{#if emailErr}}
+{{/if}}
+{{#if passwordErr}}
+<script>
+  alert("Type wrong password");
+</script>
+{{/if}}

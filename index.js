@@ -70,7 +70,7 @@ app.post("/login",(req,res) => {
   let username = s.validateString(req.body.username.trim());
   let password = s.validatePassword(req.body.password.trim());
   // Get data from database
-  userTb.getUser(username)
+  userTb.getUser({username:username})
   .then(user => {
     if (user[0].password === password){
       req.session.userID = user[0].id;
@@ -102,11 +102,26 @@ app.post("/register",(req,res) => {
     email !== "" && password !== "" && rePassword !== ""
   ){
     // Check if all this attributes are existed or not ?
-    if (password === rePassword){
-      let fullname = `${firstName} ${lastName}`;
-      userTb.addUser(username, password, email, fullname, gender);
-      res.redirect("/login");
-    }
+    let checkExist = async(function(){
+      let checkUsername = await(userTb.getUser({username:username}));
+      let checkEmail = await(userTb.getUser({email:email}));
+      return {
+        checkUsername: checkUsername,
+        checkEmail: checkEmail
+      };
+    });
+    checkExist()
+    .then(rs => {
+      if (rs.checkUsername.length !== 0) res.render("/register",{usernameErr: true});
+      else if (rs.checkUsername.length !== 0) res.render("/register",{emailErr: true});
+      else if (password !== rePassword) res.render("/register",{passwordErr: true});
+      else{
+        let fullname = `${firstName} ${lastName}`;
+        userTb.addUser(username, password, email, fullname, gender);
+        res.redirect("/login");
+      }
+    })
+    .catch(err => err);
   }
   else res.redirect("/register");
 })
