@@ -33,6 +33,7 @@ body{
 
 .app-container .nav ul li{
   float: left;
+  /* position: relative; */
   /* border: 1px solid black; */
 }
 
@@ -63,6 +64,7 @@ body{
   /* border: 1px solid black; */
   display: grid;
   grid-template-columns: 25% 75%;
+  z-index: 0;
 }
 
 /* .app-container .chat-container .contact-list{
