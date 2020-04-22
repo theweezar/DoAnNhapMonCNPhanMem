@@ -1,7 +1,11 @@
 $(function(){
   const socket = io();
   // console.log(socket);
+  // ==================================================================================
+  // WHEN YOU CONNECT TO SERVER
   socket.emit("CONNECT_TO_SERVER",{username:USERNAME});
+  // ==================================================================================
+  // WHEN YOU SEND A MSG TO YOUR FRIEND
   FRAME.textArea.keyup(function(e){ // Type enter and the msg will be sent to server
     if (e.keyCode === 13){
       var msg = $(this).val().split("\n")[0];
@@ -35,11 +39,14 @@ $(function(){
     });
     loadLastestMsgInFriendTag({
       senderUsername: USERNAME,
-      rcvUsername: window.location.pathname.split("/")[3],
+      rcvUsername: d.rcvUsername,
       msg: d.msg,
       type: d.type
     });
+    // Bring your friends to the top whenever you text to them
+    reLoadContactList(d.rcvUsername);
   })
+  // ===================================================================================
   // RECEIVE FROM SOMEONE
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
     console.log(d);
@@ -59,6 +66,8 @@ $(function(){
       msg: d.msg,
       type: d.type
     });
+    // Bring your friends to the top whenever they text to you
+    reLoadContactList(d.senderUsername);
   })
   // ====================================================================================
   // Connect to someone throught a chat box
@@ -125,6 +134,12 @@ $(function(){
         })
       }
     }
-    
   })
+
+  // ===================================================================================
+  // TYPING TO FIND FRIEND
+  FRAME.findFriend.on("keyup",function(e){
+    if (e.keyCode === 13) socket.emit("FIND_FRIEND",{keyName: $(this).val()});
+  })
+
 });

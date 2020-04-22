@@ -41,7 +41,7 @@ function loadLastestMsgInFriendTag(d = {senderUsername, rcvUsername, msg, type})
     $(`a[role='link'][data-username='${location.pathname.split("/")[3]}']`)
     .find("#lst-msg")
     .text(`${d.senderUsername}: ${d.type == "text" ? d.msg:"File"}`);
-    console.log(USERNAME);
+    // console.log(USERNAME);
   }
   // If not, this func will load the msg and highlight it
   else{
@@ -67,4 +67,12 @@ function loadHistoryChat(history = []){
       type: d.type
     });
   });
+}
+
+function reLoadContactList(topUsername){
+  let top = $(`li a[data-username='${topUsername}']`).parent();
+  top.remove();
+  let bottom = $("#contact-list ul li");
+  $("#contact-list ul").append(top);
+  $("#contact-list ul").append(bottom);
 }

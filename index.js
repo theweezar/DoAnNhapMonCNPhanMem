@@ -165,7 +165,9 @@ app.get("/app/chat/:username",mdW.redirectLogin, (req, res) => {
     // Find all the lastest unseen or seen messages of you and your friends then display it on screen
     let allLastestMsg = friendList.map(friend => {
       return await(userMsgDetail.getLastestMsg(req.session.username, friend.username));
-    })
+    });
+    // If there are some msg that aren't seen yet from your friends, we will make all that msg "Seen"
+    userMsgDetail.seenMsg(req.params.username, req.session.username);
     return {
       friendList: friendList,
       historyChat: historyChat,
@@ -211,6 +213,11 @@ io.on("connection",socket => {
     console.log(`${d.username} is connected to the server !`);
     socket.username = d.username;
   });
+  // ================================== FIND FRIEND ======================================== //
+  // 1. Typing to find friend with username, fullname, ....
+  socket.on("FIND_FRIEND",d => {
+    console.log(d);
+  })
 
   // ================================== USER TO USER ======================================= //
   // 1. Click on friend tag to connect to chat box 1 - 1

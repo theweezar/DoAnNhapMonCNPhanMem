@@ -1,0 +1,6 @@
+users (userId, username, password, email, fullname, gender)
+friends (id, userId_1, userId_2, accept, recent) - recent is the lastest texting time
+user_messages_detail (id, sender_username, content, rcv_username, type, seen, sent_at)
+groups (group_id, creator_username / creator_id)
+groups_members_detail (group_id, username / userId)
+groups_messages_detail (id, group_id, sender_username, content, type, seen, sent_at)

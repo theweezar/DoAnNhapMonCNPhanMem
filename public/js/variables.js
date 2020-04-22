@@ -1,4 +1,5 @@
 const FRAME = {
+  findFriend:$("#find-friend"),
   textArea: $("#t_msg"),
   msgBox: $("#msg_box"),
   friendTag: $("a[role='link']"),
