@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2020 at 09:02 AM
+-- Generation Time: Apr 23, 2020 at 05:51 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -32,6 +32,7 @@ CREATE TABLE `friends` (
   `id` int(11) NOT NULL,
   `userId_1` int(11) NOT NULL,
   `userId_2` int(11) NOT NULL,
+  `accept` tinyint(1) NOT NULL,
   `recent` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -39,11 +40,14 @@ CREATE TABLE `friends` (
 -- Dumping data for table `friends`
 --
 
-INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `recent`) VALUES
-(1, 1, 3, '2020-04-22 10:14:50'),
-(2, 4, 1, '2020-04-22 10:23:35'),
-(3, 1, 5, '2020-04-22 10:23:50'),
-(4, 3, 5, '2020-04-18 04:09:04');
+INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `accept`, `recent`) VALUES
+(1, 1, 3, 1, '2020-04-22 10:14:50'),
+(2, 4, 1, 1, '2020-04-22 10:23:35'),
+(3, 1, 5, 1, '2020-04-22 10:23:50'),
+(4, 3, 5, 1, '2020-04-18 04:09:04'),
+(5, 1, 8, 0, '2020-04-23 12:28:27'),
+(6, 5, 8, 0, '2020-04-23 13:46:00'),
+(7, 3, 8, 0, '2020-04-23 13:46:23');
 
 -- --------------------------------------------------------
 
@@ -54,6 +58,7 @@ INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `recent`) VALUES
 CREATE TABLE `groups` (
   `id` int(11) NOT NULL,
   `creator` varchar(20) NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `recent` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -107,7 +112,11 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `fullname`, `gender`
 (1, 'admin', 'Adminpro3010', 'minhduc@gmail.com', 'Minh Duc', 1),
 (3, 'dai_ga_vl', 'Daigavl3008', 'Dai@gmail.com', 'Phan Dai', 1),
 (4, 'ngoctrinhsexy', 'Ngoctrinhsexy90', 'ngoctrinh@gmail.com', 'Ngoc Trinh', 0),
-(5, 'truc_dong', 'Trucdong99', 'trucdong@gmail.com', 'Truc Dong', 1);
+(5, 'truc_dong', 'Trucdong99', 'trucdong@gmail.com', 'Truc Dong', 1),
+(6, 'toanhkhoa', 'Khoato2712', 'khoato@gmail.com', 'To Anh Khoa', 1),
+(7, 'tranminhduc', 'Minhduc12345', 'ductran@yahoo.com', 'Tran Minh Duc', 1),
+(8, 'nguyenminhduc', 'Minhduc12345', 'ducnguyen@gmail.com', 'Nguyen Minh Duc', 1),
+(9, 'trannhatduc', 'Nhatduc12345', 'nhatduc@yahoo.com', 'Tran Nhat Duc', 1);
 
 -- --------------------------------------------------------
 
@@ -195,13 +204,13 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (64, 'admin', 's', 'truc_dong', 'text', 1, '2020-04-22 10:05:29'),
 (65, 'admin', 'r', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:08:28'),
 (66, 'admin', 'w', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:11:35'),
-(67, 'admin', 't', 'dai_ga_vl', 'text', 0, '2020-04-22 10:14:50'),
+(67, 'admin', 't', 'dai_ga_vl', 'text', 1, '2020-04-22 10:14:50'),
 (68, 'admin', '5', 'truc_dong', 'text', 1, '2020-04-22 10:16:37'),
 (69, 'admin', 's', 'truc_dong', 'text', 1, '2020-04-22 10:17:20'),
 (70, 'admin', 'j', 'truc_dong', 'text', 1, '2020-04-22 10:20:30'),
 (71, 'admin', 'hi', 'ngoctrinhsexy', 'text', 0, '2020-04-22 10:23:35'),
-(72, 'admin', 't', 'truc_dong', 'text', 0, '2020-04-22 10:23:44'),
-(73, 'admin', 'y', 'truc_dong', 'text', 0, '2020-04-22 10:23:50');
+(72, 'admin', 't', 'truc_dong', 'text', 1, '2020-04-22 10:23:44'),
+(73, 'admin', 'y', 'truc_dong', 'text', 1, '2020-04-22 10:23:50');
 
 --
 -- Indexes for dumped tables
@@ -211,19 +220,31 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 -- Indexes for table `friends`
 --
 ALTER TABLE `friends`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId_1` (`userId_1`),
+  ADD KEY `userId_2` (`userId_2`);
 
 --
 -- Indexes for table `groups`
 --
 ALTER TABLE `groups`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `creator` (`creator`);
+
+--
+-- Indexes for table `groups_members_detail`
+--
+ALTER TABLE `groups_members_detail`
+  ADD KEY `id` (`id`),
+  ADD KEY `username` (`username`);
 
 --
 -- Indexes for table `groups_messages_detail`
 --
 ALTER TABLE `groups_messages_detail`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `groupId` (`groupId`),
+  ADD KEY `sender_username` (`sender_username`);
 
 --
 -- Indexes for table `users`
@@ -237,7 +258,9 @@ ALTER TABLE `users`
 -- Indexes for table `user_messages_detail`
 --
 ALTER TABLE `user_messages_detail`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sender_username` (`sender_username`),
+  ADD KEY `rcv_username` (`rcv_username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -247,7 +270,7 @@ ALTER TABLE `user_messages_detail`
 -- AUTO_INCREMENT for table `friends`
 --
 ALTER TABLE `friends`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `groups`
@@ -265,13 +288,51 @@ ALTER TABLE `groups_messages_detail`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `user_messages_detail`
 --
 ALTER TABLE `user_messages_detail`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `friends`
+--
+ALTER TABLE `friends`
+  ADD CONSTRAINT `friends_ibfk_1` FOREIGN KEY (`userId_1`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `friends_ibfk_2` FOREIGN KEY (`userId_2`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `groups`
+--
+ALTER TABLE `groups`
+  ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`creator`) REFERENCES `users` (`username`);
+
+--
+-- Constraints for table `groups_members_detail`
+--
+ALTER TABLE `groups_members_detail`
+  ADD CONSTRAINT `groups_members_detail_ibfk_1` FOREIGN KEY (`id`) REFERENCES `groups` (`id`),
+  ADD CONSTRAINT `groups_members_detail_ibfk_2` FOREIGN KEY (`username`) REFERENCES `users` (`username`);
+
+--
+-- Constraints for table `groups_messages_detail`
+--
+ALTER TABLE `groups_messages_detail`
+  ADD CONSTRAINT `groups_messages_detail_ibfk_1` FOREIGN KEY (`groupId`) REFERENCES `groups` (`id`),
+  ADD CONSTRAINT `groups_messages_detail_ibfk_2` FOREIGN KEY (`sender_username`) REFERENCES `users` (`username`);
+
+--
+-- Constraints for table `user_messages_detail`
+--
+ALTER TABLE `user_messages_detail`
+  ADD CONSTRAINT `user_messages_detail_ibfk_1` FOREIGN KEY (`sender_username`) REFERENCES `users` (`username`),
+  ADD CONSTRAINT `user_messages_detail_ibfk_2` FOREIGN KEY (`rcv_username`) REFERENCES `users` (`username`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
