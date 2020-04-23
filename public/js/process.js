@@ -3,7 +3,10 @@ $(function(){
   // console.log(socket);
   // ==================================================================================
   // WHEN YOU CONNECT TO SERVER
-  socket.emit("CONNECT_TO_SERVER",{username:USERNAME});
+  socket.emit("CONNECT_TO_SERVER",{
+    username:USERNAME,
+    userID: ID
+  });
   // ==================================================================================
   // WHEN YOU SEND A MSG TO YOUR FRIEND
   FRAME.textArea.keyup(function(e){ // Type enter and the msg will be sent to server
@@ -138,8 +141,48 @@ $(function(){
 
   // ===================================================================================
   // TYPING TO FIND FRIEND
-  FRAME.findFriend.on("keyup",function(e){
-    if (e.keyCode === 13) socket.emit("FIND_FRIEND",{keyName: $(this).val()});
-  })
+  FRAME.findFriend.on("keyup", function(e){
+    if (e.keyCode === 13 && $(this).val().trim().length !== 0){
+      socket.emit("FIND_FRIEND",{keyName: $(this).val().trim()});
+    }
+  });
 
+  // ===================================================================================
+  // RECEIVE THE LIST OF FRIEND WHO WE JUST FIND ABOVE
+  socket.on(`RETURN_FRIEND_TO_${USERNAME}`, function(d){
+    console.log(d);
+    loadFoundFriend(d.rsList);
+    FRAME.reqBtn.click(function(e){
+      console.log($(this).parent().parent().attr("data-username"));
+      socket.emit("SEND_REQUEST",{
+        fromUsername: USERNAME,
+        fromID: ID,
+        toUsername: $(this).parent().parent().attr("data-username")
+      });
+      // $(this).attr("class","wait").text("Waiting...");
+    });
+    FRAME.ansBtn.click(function(e){
+      socket.emit("SEND_ANSWER",{
+        fromUsername: USERNAME,
+        toUsername: $(this).parent().parent().parent().attr("data-username")
+      });
+    })
+  });
+
+  socket.on(`RESPONSE_REQUEST_${USERNAME}`, function(d){
+    if (d.isReq) FRAME.reqBtn.attr("class","wait").text("Waiting...");
+    else{
+      // Nofitication
+    }
+  });
+
+  socket.on(`RESPONSE_ANSWER_${USERNAME}`, function(d){
+    // Nofitication or decorating something, i don't know
+    if (d.isAns){
+
+    } 
+    else{
+      
+    }
+  });
 });

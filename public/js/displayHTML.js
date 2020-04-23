@@ -73,6 +73,32 @@ function reLoadContactList(topUsername){
   let top = $(`li a[data-username='${topUsername}']`).parent();
   top.remove();
   let bottom = $("#contact-list ul li");
-  $("#contact-list ul").append(top);
-  $("#contact-list ul").append(bottom);
+  FRAME.contactList.append(top);
+  FRAME.contactList.append(bottom);
+}
+
+function loadFoundFriend(fList = []){
+  FRAME.contactList.html("");
+  fList.forEach(friend => {
+    if (friend.username !== USERNAME){
+      let html = "";
+      if (friend.connect === undefined) html = `<div role="req" class="request">+ Add friend</div>`;
+      else if (friend.connect === "w84accept") html = `<div class="wait">Waiting...</div>`;
+      else if (friend.connect === "w84answer") html = `
+        <div class='answer'><span id="answer" role='yes'>Accept</span><span id="answer" role='no'>Decline</span></div>
+      `
+      else if (friend.connect === "friend") html = `<div class="friend">&#10004; Friend</div>`;
+      FRAME.contactList.append(
+        `<li>
+          <a role="tag" data-username="${friend.username}" rcv-type="user">
+            <img class="avatar" src="../../icon/PngItem_5167304.png" alt="">
+            <div class="in4">
+              <div class="in4-1">${friend.fullname}</div>
+              ${html}
+            </div>
+          </a>
+        </li>`
+      );
+    }
+  });
 }

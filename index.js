@@ -212,18 +212,54 @@ io.on("connection",socket => {
   socket.on("CONNECT_TO_SERVER",d => {
     console.log(`${d.username} is connected to the server !`);
     socket.username = d.username;
+    socket.userID = d.userID;
   });
   // ================================== FIND FRIEND ======================================== //
   // 1. Typing to find friend with username, fullname, ....
-  socket.on("FIND_FRIEND",d => {
-    friendTb.find(d.keyName)
-    .then(rs => {
-      io.emit(`RETURN_FRIEND_TO_${socket.username}`,{rsList: rs});
-    })
-    .catch(err => err);
+  socket.on("FIND_FRIEND", d => {
+    let findFriend = async(function(){
+      let target = await(userTb.find(d.keyName));
+      await(function(){
+        target.map(f => {
+          // if there are some results. We will check if this account has a connection with
+          // all account in the results or not 
+          let row = await(friendTb.getChatID(socket.username, f.username));
+          if (row.length == 0) f.connect = undefined;
+          else if (row[0].accept === 1) f.connect = "friend";
+          else if (row[0].accept === 0 && row[0].userId_1 === socket.userID) f.connect = "w84accept";
+          else if (row[0].accept === 0) f.connect = "w84answer";
+        })
+      }());
+      return target;
+    });
+    findFriend().then(rs => {
+      console.log(rs);
+      io.emit(`RETURN_FRIEND_TO_${socket.username}`,{rsList: rs})
+    });
   })
-  // 2. Send request to add friend
-  
+
+  // 2. Send and response the request to add friend
+  socket.on("SEND_REQUEST", d => {
+    userTb.getUser({username: d.toUsername})
+    .then(rs => {
+      friendTb.request(socket.userID, rs[0].id);
+      // response for both who send and who rcv
+      io.emit(`RESPONSE_REQUEST_${d.fromUsername}`,{isReq: true}); // me
+      io.emit(`RESPONSE_REQUEST_${d.toUsername}`,{isReq: false}); // who I request to add friend
+    })
+    .catch(err => err)
+  })
+
+  // 3. Send and response the answer to decide be friend or not
+  socket.on("SEND_ANSWER", d => {
+    userTb.getUser({username: d.toUsername})
+    .then(rs => {
+      friendTb.accept(socket.userID, rs[0].id);
+      // response for both who answer and who rcv that answer
+      io.emit(`RESPONSE_ANSWER_${d.fromUsername}`,{isAns: true}); // who answer my request
+      io.emit(`RESPONSE_ANSWER_${d.toUsername}`,{isAns: false}); // me
+    })
+  })
 
   // ================================== USER TO USER ======================================= //
   // 1. Click on friend tag to connect to chat box 1 - 1

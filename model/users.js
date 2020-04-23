@@ -46,6 +46,15 @@ class Users{
       });
     }
   }
+  find(clue){
+    return new Promise((resolve, reject) => {
+      this.conn.query(`SELECT * FROM ${tbName.users} WHERE LOCATE('${clue}',fullname) > 0 OR
+      LOCATE('${clue}',username) > 0 OR LOCATE('${clue}',email) > 0`, (err, rs) => {
+        if (err) reject(err);
+        else resolve(rs);
+      });
+    });
+  }
 }
 
 
