@@ -216,8 +216,14 @@ io.on("connection",socket => {
   // ================================== FIND FRIEND ======================================== //
   // 1. Typing to find friend with username, fullname, ....
   socket.on("FIND_FRIEND",d => {
-    console.log(d);
+    friendTb.find(d.keyName)
+    .then(rs => {
+      io.emit(`RETURN_FRIEND_TO_${socket.username}`,{rsList: rs});
+    })
+    .catch(err => err);
   })
+  // 2. Send request to add friend
+  
 
   // ================================== USER TO USER ======================================= //
   // 1. Click on friend tag to connect to chat box 1 - 1

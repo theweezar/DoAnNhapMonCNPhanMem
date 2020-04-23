@@ -5,10 +5,24 @@ class Friends{
   constructor(connection = mysql.createConnection()){
     this.conn = connection;
   }
-  addFriend(userID1, userID2){
-    this.conn.query(`INSERT INTO ${tbName.friends} (userId_1,userId_2) VALUES
-    (${userID1},${userID2})`, err => {
+  request(userID1, userID2){
+    this.conn.query(`INSERT INTO ${tbName.friends} (userId_1,userId_2,accept,recent) VALUES
+    (${userID1},${userID2},0,now())`, err => {
       if (err) throw err;
+    });
+  }
+  accept(userID1, userID2){
+    this.conn.query(`UPDATE ${tbName.friends} SET accept = 1, recent = now() WHERE
+    userId_1 = ${userID1} AND userId_2 = ${userID2} OR
+    userId_1 = ${userID2} AND userId_2 = ${userID1}`, err => err);
+  }
+  find(clue){
+    return new Promise((resolve, reject) => {
+      this.conn.query(`SELECT * FROM ${tbName.users} WHERE LOCATE('${clue}',fullname) > 0 OR
+      LOCATE('${clue}',username) > 0 OR LOCATE('${clue}',email) > 0`, (err, rs) => {
+        if (err) reject(err);
+        else resolve(rs);
+      })
     })
   }
   getTheLastestTextedFriend(userID){
@@ -28,7 +42,7 @@ class Friends{
       this.conn.query(`SELECT * FROM ${tbName.friends} JOIN ${tbName.users} ON 
       ${tbName.users}.id = IF(${tbName.friends}.userId_1 = ${userID},${tbName.friends}.userId_2,
       ${tbName.friends}.userId_1) WHERE ${tbName.friends}.userId_1 = ${userID} OR 
-      ${tbName.friends}.userId_2 = ${userID} ORDER BY
+      ${tbName.friends}.userId_2 = ${userID} AND ${tbName.friends}.accept = 1 ORDER BY
       ${tbName.friends}.recent DESC`, (err, rs) => {
         if (err) reject(err);
         else resolve(rs);

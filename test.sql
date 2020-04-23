@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2020 at 06:16 AM
+-- Generation Time: Apr 23, 2020 at 09:02 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -40,10 +40,49 @@ CREATE TABLE `friends` (
 --
 
 INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `recent`) VALUES
-(1, 1, 3, '2020-04-18 04:09:55'),
-(2, 4, 1, '2020-04-18 02:56:51'),
-(3, 1, 5, '2020-04-18 03:48:26'),
+(1, 1, 3, '2020-04-22 10:14:50'),
+(2, 4, 1, '2020-04-22 10:23:35'),
+(3, 1, 5, '2020-04-22 10:23:50'),
 (4, 3, 5, '2020-04-18 04:09:04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `groups`
+--
+
+CREATE TABLE `groups` (
+  `id` int(11) NOT NULL,
+  `creator` varchar(20) NOT NULL,
+  `recent` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `groups_members_detail`
+--
+
+CREATE TABLE `groups_members_detail` (
+  `id` int(11) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `isAdmin` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `groups_messages_detail`
+--
+
+CREATE TABLE `groups_messages_detail` (
+  `id` int(11) NOT NULL,
+  `groupId` int(11) NOT NULL,
+  `sender_username` varchar(20) NOT NULL,
+  `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `sent_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -79,7 +118,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `fullname`, `gender`
 CREATE TABLE `user_messages_detail` (
   `id` int(11) NOT NULL,
   `sender_username` varchar(20) NOT NULL,
-  `content` text NOT NULL,
+  `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `rcv_username` varchar(20) NOT NULL,
   `type` varchar(10) NOT NULL,
   `seen` tinyint(1) NOT NULL,
@@ -104,11 +143,11 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (12, 'admin', 'u', 'dai_ga_vl', 'text', 1, '2020-04-18 02:32:33'),
 (13, 'admin', 'asd', 'dai_ga_vl', 'text', 1, '2020-04-18 02:33:30'),
 (14, 'admin', 'a', 'truc_dong', 'text', 1, '2020-04-18 02:36:10'),
-(15, 'admin', 'hello', 'ngoctrinhsexy', 'text', 0, '2020-04-18 02:48:25'),
+(15, 'admin', 'hello', 'ngoctrinhsexy', 'text', 1, '2020-04-18 02:48:25'),
 (16, 'admin', 'w', 'truc_dong', 'text', 1, '2020-04-18 02:51:09'),
 (17, 'admin', 'we', 'dai_ga_vl', 'text', 1, '2020-04-18 02:52:55'),
-(18, 'admin', 'hi', 'ngoctrinhsexy', 'text', 0, '2020-04-18 02:55:35'),
-(19, 'admin', 'shi', 'ngoctrinhsexy', 'text', 0, '2020-04-18 02:56:51'),
+(18, 'admin', 'hi', 'ngoctrinhsexy', 'text', 1, '2020-04-18 02:55:35'),
+(19, 'admin', 'shi', 'ngoctrinhsexy', 'text', 1, '2020-04-18 02:56:51'),
 (20, 'admin', 'we', 'truc_dong', 'text', 1, '2020-04-18 02:56:54'),
 (21, 'admin', 'wtff', 'dai_ga_vl', 'text', 1, '2020-04-18 02:56:59'),
 (22, 'dai_ga_vl', 'fuck you', 'admin', 'text', 1, '2020-04-18 03:08:41'),
@@ -127,7 +166,7 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (35, 'truc_dong', 'sd', 'admin', 'text', 1, '2020-04-18 03:34:21'),
 (36, 'truc_dong', 'ewr', 'admin', 'text', 1, '2020-04-18 03:34:29'),
 (37, 'truc_dong', 'alo', 'admin', 'text', 1, '2020-04-18 03:34:37'),
-(38, 'admin', 'hú', 'truc_dong', 'text', 1, '2020-04-18 03:38:15'),
+(38, 'admin', 'h?', 'truc_dong', 'text', 1, '2020-04-18 03:38:15'),
 (39, 'truc_dong', 'shit', 'admin', 'text', 1, '2020-04-18 03:38:28'),
 (40, 'admin', 'fuck', 'dai_ga_vl', 'text', 1, '2020-04-18 03:38:39'),
 (41, 'truc_dong', 'lets go', 'admin', 'text', 1, '2020-04-18 03:38:54'),
@@ -136,8 +175,33 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (44, 'truc_dong', 'r', 'admin', 'text', 1, '2020-04-18 03:48:26'),
 (45, 'dai_ga_vl', 'Buoc qu doi nhau', 'admin', 'text', 1, '2020-04-18 04:07:35'),
 (46, 'admin', 'dafug', 'dai_ga_vl', 'text', 1, '2020-04-18 04:07:48'),
-(47, 'dai_ga_vl', 'Dm', 'truc_dong', 'text', 0, '2020-04-18 04:09:04'),
-(48, 'dai_ga_vl', 'Cc', 'admin', 'text', 1, '2020-04-18 04:09:55');
+(47, 'dai_ga_vl', 'Dm', 'truc_dong', 'text', 1, '2020-04-18 04:09:04'),
+(48, 'dai_ga_vl', 'Cc', 'admin', 'text', 1, '2020-04-18 04:09:55'),
+(49, 'admin', 'dm', 'dai_ga_vl', 'text', 1, '2020-04-19 12:30:54'),
+(50, 'admin', 'alo', 'ngoctrinhsexy', 'text', 1, '2020-04-20 05:53:55'),
+(51, 'admin', 'oc', 'ngoctrinhsexy', 'text', 1, '2020-04-20 05:56:31'),
+(52, 'admin', 'we', 'truc_dong', 'text', 1, '2020-04-20 05:56:38'),
+(53, 'truc_dong', 'hello holle', 'admin', 'text', 1, '2020-04-20 06:42:18'),
+(54, 'truc_dong', 'bonjour', 'admin', 'text', 1, '2020-04-20 06:43:14'),
+(55, 'admin', 'hello back', 'truc_dong', 'text', 1, '2020-04-20 06:45:09'),
+(56, 'admin', 'back again', 'truc_dong', 'text', 1, '2020-04-20 06:45:43'),
+(57, 'admin', 'img/vghcsdpzii.jpg', 'dai_ga_vl', 'img', 1, '2020-04-20 06:55:20'),
+(58, 'admin', 'hya', 'dai_ga_vl', 'text', 1, '2020-04-20 07:16:32'),
+(59, 'truc_dong', 'img/lvzhpiqdbs.jpg', 'admin', 'img', 1, '2020-04-20 07:19:12'),
+(60, 'admin', 'Ghe', 'truc_dong', 'text', 1, '2020-04-22 10:00:04'),
+(61, 'admin', 'ttttt', 'dai_ga_vl', 'text', 1, '2020-04-22 10:00:51'),
+(62, 'admin', 'dep', 'truc_dong', 'text', 1, '2020-04-22 10:01:35'),
+(63, 'admin', 'uhgt', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:03:02'),
+(64, 'admin', 's', 'truc_dong', 'text', 1, '2020-04-22 10:05:29'),
+(65, 'admin', 'r', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:08:28'),
+(66, 'admin', 'w', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:11:35'),
+(67, 'admin', 't', 'dai_ga_vl', 'text', 0, '2020-04-22 10:14:50'),
+(68, 'admin', '5', 'truc_dong', 'text', 1, '2020-04-22 10:16:37'),
+(69, 'admin', 's', 'truc_dong', 'text', 1, '2020-04-22 10:17:20'),
+(70, 'admin', 'j', 'truc_dong', 'text', 1, '2020-04-22 10:20:30'),
+(71, 'admin', 'hi', 'ngoctrinhsexy', 'text', 0, '2020-04-22 10:23:35'),
+(72, 'admin', 't', 'truc_dong', 'text', 0, '2020-04-22 10:23:44'),
+(73, 'admin', 'y', 'truc_dong', 'text', 0, '2020-04-22 10:23:50');
 
 --
 -- Indexes for dumped tables
@@ -147,6 +211,18 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 -- Indexes for table `friends`
 --
 ALTER TABLE `friends`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `groups`
+--
+ALTER TABLE `groups`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `groups_messages_detail`
+--
+ALTER TABLE `groups_messages_detail`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -174,6 +250,18 @@ ALTER TABLE `friends`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `groups`
+--
+ALTER TABLE `groups`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `groups_messages_detail`
+--
+ALTER TABLE `groups_messages_detail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
@@ -183,7 +271,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_messages_detail`
 --
 ALTER TABLE `user_messages_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
