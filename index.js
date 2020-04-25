@@ -145,6 +145,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   });
   getEverything()
   .then(rs => {
+    // Bug is here
     res.redirect(`/app/chat/${rs[0].username}`);
   })
   .catch(err => {throw err;});

@@ -1,0 +1,13 @@
+Danh sách tiến trình:
+- Đăng ký
+  + Xác thực username, email, password 
+- Đăng nhập
+- Gửi lời mời kết bạn
+- Phản hồi lời mời kết bạn
+- Kết nối người dùng - người dùng
+- Xử lý tin nhắn chữ giữa người dùng - người dùng
+- Xử lý tin nhắn tệp giữa người dùng - người dùng
+- Tạo group
+- Kết nối người dùng - group
+- Xử lý tin nhắn chữ giữa người dùng - group
+- Xử lý tin nhắn tệp giữa người dùng - group
