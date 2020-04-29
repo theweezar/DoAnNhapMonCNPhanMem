@@ -203,6 +203,10 @@ app.get("/app/chat/:username",mdW.redirectLogin, (req, res) => {
   .catch(err => {throw err;});
 })
 
+app.get("/app/chat/:group", mdW.redirectLogin, (req, res) => {
+  res.end();
+})
+
 const server = app.listen(PORT,() => {
   console.log(`Server is running on PORT: ${PORT} !!!!`);
 })

@@ -38,13 +38,15 @@ body{
 }
 
 .app-container .nav ul li:nth-child(1){
-  width: 95%;
+  /* width: 95%; */
   padding-left: 25px;
 }
 
 .app-container .nav ul li:nth-child(2){
   text-transform: uppercase;
   font-family: 'Fira Sans', sans-serif;
+  margin: 0 25px 0 25px;
+  cursor: pointer;
 }
 
 .app-container .nav .title{
@@ -341,4 +343,86 @@ body{
   border: 2px solid white;
   padding: 15px 20px;
   cursor: pointer;
+}
+
+.reg-g-f{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.reg-g-f .reg-g-b{
+  width: 40%;
+  height: 80%;
+  background: whitesmoke;
+  display: grid;
+  grid-template-areas: 
+  'header header header'
+  'g-name g-name g-name'
+  'select select exist'
+  'select select exist'
+  'select select exist'
+  'select select exist'
+  'select select exist'
+  'select select exist'
+  'select select exist'
+  'select select exist'
+  'select select exist';
+}
+
+.reg-g-f .reg-g-b .header-g{
+  grid-area: header;
+  border-bottom: 1px solid gray;
+  position: relative;
+}
+
+.reg-g-f .reg-g-b .header-g div{
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+}
+
+.reg-g-f .reg-g-b .header-g .g-title{
+  left: 10%;
+}
+
+.reg-g-f .reg-g-b .header-g .close-btn{
+  right: 2%;
+  cursor: pointer;
+}
+
+.reg-g-f .reg-g-b .g-name-inp{
+  position: relative;
+  grid-area: g-name;
+  border-bottom: 1px solid gray;
+}
+
+.reg-g-f .reg-g-b .g-name-inp input, .reg-g-f .reg-g-b .g-name-inp .create-btn{
+  position: absolute;
+  transform: translate(-50%,-50%);
+  top: 50%;
+}
+
+.reg-g-f .reg-g-b .g-name-inp input{
+  left: 18%;
+}
+
+.reg-g-f .reg-g-b .g-name-inp .create-btn{
+  right: -2%;
+  cursor: pointer;
+}
+
+.reg-g-f .reg-g-b .select-f{
+  grid-area: select;
+  border-right: 1px solid gray;
+}
+
+.reg-g-f .reg-g-b .exist-f{
+  grid-area: exist;
+  
 }
