@@ -231,8 +231,8 @@ io.on("connection",socket => {
           let row = await(friendTb.getChatID(socket.username, f.username));
           if (row.length == 0) f.connect = undefined;
           else if (row[0].accept === 1) f.connect = "friend";
-          else if (row[0].accept === 0 && row[0].userId_1 === socket.userID) f.connect = "w84accept";
-          else if (row[0].accept === 0) f.connect = "w84answer";
+          else if (row[0].accept === 0 && row[0].userId_1 === socket.userID) f.connect = "waiting";
+          else if (row[0].accept === 0) f.connect = "answer";
         })
       }());
       return target;

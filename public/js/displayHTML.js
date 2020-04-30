@@ -83,8 +83,8 @@ function loadFoundPeople(pList = []){
     if (friend.username !== USERNAME){
       let html = "";
       if (friend.connect === undefined) html = `<div role="req" class="request">+ Add friend</div>`;
-      else if (friend.connect === "w84accept") html = `<div class="wait">Waiting...</div>`;
-      else if (friend.connect === "w84answer") html = `
+      else if (friend.connect === "waiting") html = `<div class="wait">Waiting...</div>`;
+      else if (friend.connect === "answer") html = `
         <div class='answer'><span id="answer" role='yes'>Accept</span><span id="answer" role='no'>Decline</span></div>
       `
       else if (friend.connect === "friend") html = `<div class="friend">&#10004; Friend</div>`;
