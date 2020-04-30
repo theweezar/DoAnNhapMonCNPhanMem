@@ -77,9 +77,9 @@ function reLoadContactList(topUsername){
   FRAME.contactList.append(bottom);
 }
 
-function loadFoundFriend(fList = []){
+function loadFoundPeople(pList = []){
   FRAME.contactList.html("");
-  fList.forEach(friend => {
+  pList.forEach(friend => {
     if (friend.username !== USERNAME){
       let html = "";
       if (friend.connect === undefined) html = `<div role="req" class="request">+ Add friend</div>`;
@@ -100,5 +100,17 @@ function loadFoundFriend(fList = []){
         </li>`
       );
     }
+  });
+}
+
+function loadFoundFriend(fList = []){
+  FRAME.selectList.html("");
+  fList.forEach(f => {
+    FRAME.selectList.append(
+      `<li>
+        <div class="fname">${f.fullname}</div>
+        <div class="check-p">&#10004;</div>
+      </li>`
+    )
   });
 }

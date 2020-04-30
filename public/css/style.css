@@ -362,17 +362,17 @@ body{
   background: whitesmoke;
   display: grid;
   grid-template-areas: 
-  'header header header'
-  'g-name g-name g-name'
-  'select select exist'
-  'select select exist'
-  'select select exist'
-  'select select exist'
-  'select select exist'
-  'select select exist'
-  'select select exist'
-  'select select exist'
-  'select select exist';
+  'header header header header'
+  'g-name g-name g-name g-name'
+  'select select exist exist'
+  'select select exist exist'
+  'select select exist exist'
+  'select select exist exist'
+  'select select exist exist'
+  'select select exist exist'
+  'select select exist exist'
+  'select select exist exist'
+  'select select exist exist';
 }
 
 .reg-g-f .reg-g-b .header-g{
@@ -422,7 +422,30 @@ body{
   border-right: 1px solid gray;
 }
 
+.reg-g-f .reg-g-b .select-f div:nth-child(1) input{
+  margin: 15px 0 0 10px;
+}
+
+.reg-g-f .reg-g-b .select-f .f-sel-lst{
+  list-style: none;
+  padding: 0;
+}
+
+.reg-g-f .reg-g-b .select-f .f-sel-lst li{
+  display: grid;
+  grid-template-columns: 90% 10%;
+  cursor: pointer;
+}
+
+.reg-g-f .reg-g-b .select-f .f-sel-lst li .fname{
+  font-size: 95%;
+  padding-left: 10px;
+}
+
+.reg-g-f .reg-g-b .select-f .f-sel-lst li .check-p{
+  color: gray;
+}
+
 .reg-g-f .reg-g-b .exist-f{
   grid-area: exist;
-  
 }

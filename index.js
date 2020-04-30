@@ -219,9 +219,9 @@ io.on("connection",socket => {
     socket.username = d.username;
     socket.userID = d.userID;
   });
-  // ================================== FIND FRIEND ======================================== //
+  // ================================== FIND PEOPLE ======================================== //
   // 1. Typing to find friend with username, fullname, ....
-  socket.on("FIND_FRIEND", d => {
+  socket.on("FIND_PEOPLE", d => {
     let findFriend = async(function(){
       let target = await(userTb.find(d.keyName));
       await(function(){
@@ -239,7 +239,7 @@ io.on("connection",socket => {
     });
     findFriend().then(rs => {
       console.log(rs);
-      io.emit(`RETURN_FRIEND_TO_${socket.username}`,{rsList: rs})
+      io.emit(`RETURN_PEOPLE_TO_${socket.username}`,{rsList: rs})
     });
   })
 
@@ -362,6 +362,12 @@ io.on("connection",socket => {
   })
 
   // =================================== USER TO GROUP ===================================== //
-
+  // 1. Find my friend to add to new group
+  socket.on("FIND_FRIEND", function(d){
+    friendTb.find(d.userID, d.clue)
+    .then(rs => {
+      io.emit(`RETURN_FRIEND_TO_${socket.username}`,{friendList: rs});
+    });
+  });
   socket.on("disconnect",() => console.log("Disconnect"))
 });

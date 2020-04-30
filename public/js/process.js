@@ -143,15 +143,15 @@ $(function(){
   // TYPING TO FIND FRIEND
   FRAME.findFriend.on("keyup", function(e){
     if (e.keyCode === 13 && $(this).val().trim().length !== 0){
-      socket.emit("FIND_FRIEND",{keyName: $(this).val().trim()});
+      socket.emit("FIND_PEOPLE",{keyName: $(this).val().trim()});
     }
   });
 
   // ===================================================================================
   // RECEIVE THE LIST OF FRIEND WHO WE JUST FIND ABOVE
-  socket.on(`RETURN_FRIEND_TO_${USERNAME}`, function(d){
+  socket.on(`RETURN_PEOPLE_TO_${USERNAME}`, function(d){
     console.log(d);
-    loadFoundFriend(d.rsList);
+    loadFoundPeople(d.rsList);
     FRAME.reqBtn.click(function(e){
       console.log($(this).parent().parent().attr("data-username"));
       socket.emit("SEND_REQUEST",{
@@ -189,6 +189,20 @@ $(function(){
   // ===========================================================================
   // CREATE NEW GROUP
   $("#newGroup").click(function(){
-    
+    $("#reg-g-f").attr("style","display: flex");
+  });
+  $("#closeBtn").click(function(){
+    $("#reg-g-f").attr("style","display: none");
+  });
+  $("#inpfFriend").on("keyup", function(){
+    if ($(this).val().trim() !== ""){
+      socket.emit("FIND_FRIEND",{
+        userID: ID,
+        clue: $(this).val().trim()
+      });
+    }
+  });
+  socket.on(`RETURN_FRIEND_TO_${USERNAME}`, function(d){
+    loadFoundFriend(d.friendList);
   });
 });
