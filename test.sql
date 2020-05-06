@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2020 at 05:51 PM
+-- Generation Time: May 06, 2020 at 11:23 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -41,7 +41,7 @@ CREATE TABLE `friends` (
 --
 
 INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `accept`, `recent`) VALUES
-(1, 1, 3, 1, '2020-04-22 10:14:50'),
+(1, 1, 3, 1, '2020-04-29 02:53:43'),
 (2, 4, 1, 1, '2020-04-22 10:23:35'),
 (3, 1, 5, 1, '2020-04-22 10:23:50'),
 (4, 3, 5, 1, '2020-04-18 04:09:04'),
@@ -208,9 +208,10 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (68, 'admin', '5', 'truc_dong', 'text', 1, '2020-04-22 10:16:37'),
 (69, 'admin', 's', 'truc_dong', 'text', 1, '2020-04-22 10:17:20'),
 (70, 'admin', 'j', 'truc_dong', 'text', 1, '2020-04-22 10:20:30'),
-(71, 'admin', 'hi', 'ngoctrinhsexy', 'text', 0, '2020-04-22 10:23:35'),
+(71, 'admin', 'hi', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:23:35'),
 (72, 'admin', 't', 'truc_dong', 'text', 1, '2020-04-22 10:23:44'),
-(73, 'admin', 'y', 'truc_dong', 'text', 1, '2020-04-22 10:23:50');
+(73, 'admin', 'y', 'truc_dong', 'text', 1, '2020-04-22 10:23:50'),
+(74, 'admin', 't', 'dai_ga_vl', 'text', 0, '2020-04-29 02:53:43');
 
 --
 -- Indexes for dumped tables
@@ -294,7 +295,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_messages_detail`
 --
 ALTER TABLE `user_messages_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- Constraints for dumped tables
