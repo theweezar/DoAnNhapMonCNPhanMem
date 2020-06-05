@@ -1,0 +1,143 @@
+<div class="container-fluid d-flex p-0 m-0 h-100">
+  <!-- Nav vertical start here-->
+  <div class="col-1 bg-dark text-white m-0 p-0">
+    <div class="user p-3 d-flex justify-content-center">
+      <img src="../../icon/ava.jpg" alt="ava">
+    </div>
+    <div class="navigator ">
+      <ul class="p-0 m-0">
+        <li class="list-group active">
+          <a href="#"><img src="../../icon/conversation.png" alt="mail"></a>
+        </li>
+        <li class="list-group">
+          <a href="#"><img src="../../icon/phone.png" alt="call"></a>
+        </li>
+        <li class="list-group">
+          <a href="#"><img src="../../icon/contact.png" alt="contact"></a>
+        </li>
+        <li class="list-group">
+          <a href="#"><img src="../../icon/bell.png" alt="notification"></a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+  <!-- Nav vertical end here -->
+
+  <!-- Mail box start here -->
+  <div class="col-3 bg-whiteblue p-0 m-0">
+
+    <div class="searchbox d-flex justify-content-center">
+      <form action="" class="py-4 position-relative">
+        <label for="search " class="position-absolute">
+          <img src="../../icon/search.png" alt="glass" width="16px" >
+        </label>
+        <input type="text" name="search" placeholder="Search.." class="w-100 form-control">
+      </form>
+    </div>
+    <div class="messagebox m-0 p-0">
+
+      <!-- For Each here: Show last messages of friend-->
+      <div class="message d-flex align-items-center">
+        <!-- Information of who sent -->
+        <div class="who col-10 d-flex w-100">
+          <div class="avabox"> <img src="../../icon/ava.jpg" alt="ava"> </div>
+          <div>
+            <div class="name d-block">Dai</div>
+            <div class="lastmessage d-block">
+                dasdsadsaddsadasdasdsadadsaddasdsa
+            </div>
+          </div>
+        </div>
+
+          <!-- Information of what time it's sent -->
+          <div class="whichtime col-3">20:00 PM</div>
+      </div>
+      {{#each data.friendList as |friend index|}}
+      <div role="link" data-username="{{friend.username}}" href-link="/app/chat/{{friend.username}}" rcv-type="user" class="message d-flex align-items-center pointer">
+        <!-- Information of who sent -->
+        <div class="who col-10 d-flex w-100">
+          <div class="avabox"> <img src="../../icon/ava.jpg" alt="ava"> </div>
+          <div>
+            <div class="name d-block">{{friend.fullname}}</div>
+            <div class="lastmessage d-block">
+              {{#if friend.seenMsg}}
+              <div>{{friend.lastestSender}}{{friend.lastestMsg}}</div>
+              {{else}}
+              <div style="font-weight: bold;">{{friend.lastestSender}}{{friend.lastestMsg}}</div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+
+          <!-- Information of what time it's sent -->
+          <div class="whichtime col-3">20:00 PM</div>
+      </div>
+      {{/each}}
+      <!-- For Each here: Show last messages of friend-->
+    </div>
+
+  </div>
+  <!-- Mail box end here -->
+
+  <!-- Show Conversation start here -->
+  <div class="main p-3 px-4 w-100 h-100">
+    <div class="main-header">
+      <h3 class="name font-weight-bold">Dai</h3>
+
+      <div class="state d-flex align-items-center">
+        <div class="dot"> </div>
+        Active now
+      </div>
+    </div>
+    <hr>
+    <div class="main-container">
+      {{#each data.historyChat}}
+        {{#if this.isSender}}
+        <div class="right d-flex justify-content-end">
+          <div class="right-inbox">
+            <div class="right-what what bg-danger ">
+              {{#if this.text}}
+              {{this.content}}
+              {{/if}}
+              {{#if this.img}}
+              <img class="w-25" style="height: auto;" src="../../{{this.content}}" alt="" srcset="">
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        {{else}}
+        <div class="left d-flex justify-content-start w-75">
+          <div class="left-inbox position-relative">
+            <div class="left-who mx-3 position-absolute">
+              <img src="../../icon/ava.jpg" alt="ava">
+            </div>
+            <div class="left-what what bg-info">
+              {{#if this.text}}
+              {{this.content}}
+              {{/if}}
+              {{#if this.img}}
+              <img class="w-25" style="height: auto;" src="../../{{this.content}}" alt="" srcset="">
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        {{/if}}
+      {{/each}}
+    </div>
+    <hr>
+    <div class="main-footer">
+      <form action="">
+        <input type="text" class="messagetosend" placeholder="Your message here...">
+
+        <button class="btn btn-danger text-white send img-circle p-2">
+          <img src="../../icon/send.png" class="img-circle" alt="send" width="30px">
+        </button>
+      </form>
+    </div>
+  </div>
+  <!-- Show Conversation end here -->
+
+</div>
+
+<script src="../../js/bootstrap.js"></script>

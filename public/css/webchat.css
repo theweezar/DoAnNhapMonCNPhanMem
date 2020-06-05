@@ -1,0 +1,193 @@
+body, html {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+/* user */
+
+img[alt="ava"] {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+.user {
+    background-color: rgba(4, 15, 15, 0.452);
+    width: 100%;
+}
+.user img {
+    border: 1px solid rgb(180, 36, 36);
+}
+
+/* navigator */
+
+.navigator {
+    padding: 0 0;
+    margin: 0;
+}
+
+/* .list-group */
+
+.list-group {
+    margin: 0px 0;
+    padding: 20px 0;
+    width: 100%;
+    text-align: center;
+    transition: 0.3s;
+}
+.list-group a {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+.list-group.active {
+    background-color: rgb(206, 54, 54);
+}
+.list-group a img {
+    width: 30px;
+}
+.list-group:hover {
+    transform: scale(1.1);
+    background-color: rgb(235, 74, 74);
+}
+
+/* Editor */
+
+.img-circle {
+    border-radius: 50%;
+}
+.bg-whiteblue {
+    background-color: #E2EEF7;
+}
+
+/* searchbox */
+
+.searchbox {
+    background-color: rgb(197, 225, 247);
+}
+.searchbox form {
+    width: 100%;
+    padding: 0 20px;
+}
+.searchbox form input {
+    width: 100%;
+    border-radius: 30px;
+    padding-left: 50px;
+    font-size: 14px;
+    line-height: 14px;
+    color: black;
+    font-weight: 500;
+}
+.searchbox label {
+    top: 32%;
+    left: 10%;
+}
+
+/* messagebox */
+
+.message {
+    padding: 20px;
+    transition: 0.3s;
+}
+.message:hover {
+    background-color: rgb(155, 198, 238);
+}
+.message .avabox {
+    margin: 0 10px;
+}
+.message .name {
+    font-weight: bold;
+}
+.message .lastmessage {
+    color: rgba(0, 0, 0, .5);
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.message .whichtime {
+    font-size: 12px;
+}
+
+/* main-header */
+
+.main-header .state .dot {
+    width: 10px;
+    height: 10px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background-color: rgb(34, 231, 34);
+}
+
+/* .main-container */
+
+.main-container {
+    width: 100%;
+    height: 68%;
+    padding: 0 30px;
+    padding-right: 10px;
+    overflow: scroll;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* Track */
+
+
+/* width */
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    background: #f1f1f109;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    background: rgba(136, 136, 136, 0.103);
+}
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(85, 85, 85, 0.425);
+}
+.what {
+    border-radius: 25px;
+    margin: 10px 0;
+    padding: 15px;
+    width: fit-content;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.171);
+    color: white;
+}
+.left-who {
+    left: -5%;
+    top: 1%;
+}
+.left-what {
+    margin-left: 30px;
+}
+.right-what {
+    margin-right: 5px;
+}
+
+/* .main-footer */
+
+.main-footer form input {
+    width: 85%;
+    margin: 0 20px;
+    border: none;
+}
+.main-footer form input:focus {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid rgba(0, 0, 0, .5);
+}
+
+.pointer{
+    cursor: pointer;
+}

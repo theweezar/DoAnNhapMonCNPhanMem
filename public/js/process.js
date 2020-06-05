@@ -48,7 +48,7 @@ $(function(){
     });
     // Bring your friends to the top whenever you text to them
     reLoadContactList(d.rcvUsername);
-  })
+  });
   // ===================================================================================
   // RECEIVE FROM SOMEONE
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
@@ -71,7 +71,7 @@ $(function(){
     });
     // Bring your friends to the top whenever they text to you
     reLoadContactList(d.senderUsername);
-  })
+  });
   // ====================================================================================
   // Connect to someone throught a chat box
   FRAME.friendTag.click(function(e){
