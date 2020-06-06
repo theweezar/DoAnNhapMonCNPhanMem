@@ -211,6 +211,12 @@ app.get("/app/chat/:group", mdW.redirectLogin, (req, res) => {
   res.end();
 })
 
+app.post("/getfriendtoaddtogroup", (req ,res) => {
+  friendTb.getFriends(req.session.userID)
+  .then(rs => res.send(rs))
+  .catch(err => {throw err});
+})
+
 const server = app.listen(PORT,() => {
   console.log(`Server is running on PORT: ${PORT} !!!!`);
 })

@@ -207,6 +207,7 @@ app.get("/app/chat/:username",mdW.redirectLogin, (req, res) => {
   .catch(err => {throw err;});
 })
 
+// 1. Click on friend tag to connect to chat box 1 - 1
 app.post("/app/chat/:username", (req, res) => {
   let getMsg = async(function(){
     // let friendID = await(userTb.getUser(d.rcvUsername));
@@ -222,6 +223,39 @@ app.post("/app/chat/:username", (req, res) => {
     res.send(rs);
   }).catch(err => {throw err});
 })
+// ================================== FIND PEOPLE ======================================== //
+  // 1. Typing to find friend with username, fullname, ....
+app.post("/findfriend", (req, res) => {
+  let findFriend = async(function(){
+    // find the connection between this account and keyName
+    let target = await(userTb.find(req.body.keyName));
+    await(function(){
+      target.map(f => {
+        // if there are some results. We will check if this account has a connection with
+        // all account in the results or not 
+        let row = await(friendTb.getChatID(req.session.username, f.username));
+        if (row.length == 0) f.connect = undefined;
+        else if (row[0].accept === 1) f.connect = "friend";
+        else if (row[0].accept === 0 && row[0].userId_1 === req.session.userID) f.connect = "waiting";
+        else if (row[0].accept === 0) f.connect = "answer";
+      })
+    }());
+    return target;
+  });
+  findFriend().then(rs => {
+    console.log(rs);
+    res.send(rs);
+  });
+})
+
+  // 2. Send and response the request to add friend
+app.post("/requestaddfriend", (req, res) => {
+  
+})
+
+  // 3. Send and response the answer to decide be friend or not
+
+
 
 app.get("/app/chat/:group", mdW.redirectLogin, (req, res) => {
   res.end();
@@ -239,14 +273,7 @@ io.on("connection",socket => {
     socket.username = d.username;
     socket.userID = d.userID;
   });
-  // ================================== FIND PEOPLE ======================================== //
-  // 1. Typing to find friend with username, fullname, ....
-
-
-  // 2. Send and response the request to add friend
   
-
-  // 3. Send and response the answer to decide be friend or not
   socket.on("MESSAGE_USER_TO_USER",d => {
     // Change the last texting time
     friendTb.getChatID(d.senderUsername, d.rcvUsername)
@@ -273,7 +300,7 @@ io.on("connection",socket => {
   });
 
   // ================================== USER TO USER ======================================= //
-  // 1. Click on friend tag to connect to chat box 1 - 1
+  
   
   // 2. When you click to connect to someone, all the msg which isn't seen from your friend
   // will be made "seen"
@@ -281,7 +308,48 @@ io.on("connection",socket => {
   // 3. When you send to someone a msg, and that msg has to be send to specific user
   
   // 4. When you send an image or a file to specific user
-
+  socket.on("FILE_USER_TO_USER",d => {
+    // base64file is the data that sent from client-side
+    let base64file = d.base64file.split(';base64,').pop();
+    let isImg = ["jpg","png","jpeg"].includes(d.fileExt);
+    let link = isImg ? "img":"others";
+    // genName is a Promise that generate random name for that base64file
+    let genName = Promise.resolve(
+      // construct a array with length = 10. Then fill it with undifine value
+      // After that, give every signle element in that array a char from ascii (122-97)(a-z)
+      new Array(10).fill().map(c => c = String.fromCharCode(Math.floor(Math.random()*(122+1-97)+97)))
+    );
+    genName.then(rs => {
+      let newName = rs.toString().replace(/,/g,"");
+      // Create that base64file with the name that created above, then save it in folder "files"
+      fs.writeFile(
+        path.join(__dirname,"files",link,`${newName}.${d.fileExt}`), 
+        base64file, 
+        {encoding: 'base64'}, 
+        function(err) {
+          if (err) console.log(err);
+          else{
+            // We just need to save the link of that file which created above
+            userMsgDetail.addMsg({
+              senderUsername: d.senderUsername,
+              rcvUsername: d.rcvUsername,
+              content: `${link}/${newName}.${d.fileExt}`,
+              type:"img"
+            });
+            let sendData = {
+              senderUsername: d.senderUsername,
+              rcvUsername: d.rcvUsername,
+              msg: `${link}/${newName}.${d.fileExt}`,
+              type: "img"
+            }
+            // Send the image to the receiver
+            io.emit(`MESSAGE_TO_${d.rcvUsername}`, sendData);
+            // Response the image to the sender
+            io.emit(`RESPONSE_TO_${d.senderUsername}`, sendData);
+          }
+      });
+    });
+  })
   // =================================== USER TO GROUP ===================================== //
   // 1. Find my friend to add to new group
   

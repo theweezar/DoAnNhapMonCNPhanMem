@@ -300,10 +300,17 @@ body{
   height: 80%;
   background: transparent;
   outline: none;
-  margin: 3px;
   border: none;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 105%;
+}
+
+.app-container .chat-container .chat-box .box-2 .t-field .discard-btn{
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 5px;
+  height: auto;
 }
 
 .app-container .chat-container .chat-box .box-2 .send-btn svg{
@@ -361,6 +368,18 @@ body{
   width: 40%;
   height: 80%;
   background: whitesmoke;
-  display: grid;
-  
+  position: relative;
+}
+
+.reg-g-f .reg-g-b .close-box{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+}
+
+.reg-g-f .reg-g-b .list-pp ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }

@@ -9,7 +9,7 @@ const FRAME = {
   previewUploadFile: $("#previewFile"),
   sendUploadFile: $("#sendFile"),
   discardUploadFile: $("#discardBtn"),
-  reqBtn: $("div[role='req']"),
+  reqBtn: $('div[role="req"]'),
   ansBtn: $("span[id='answer']"),
   selectList: $("#f-sel-lst")
 };

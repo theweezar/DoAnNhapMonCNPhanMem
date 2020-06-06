@@ -190,6 +190,18 @@ $(function(){
   // CREATE NEW GROUP
   $("#newGroup").click(function(){
     $("#reg-g-f").attr("style","display: flex");
+    $.ajax({
+      type:"POST",
+      url:"/getfriendtoaddtogroup",
+      success: function(rs){
+        console.log(rs);
+        rs.forEach(f => {
+          $("ul#listpeople").append(
+            ``
+          )
+        });
+      }
+    })
   });
   $("#closeBtn").click(function(){
     $("#reg-g-f").attr("style","display: none");

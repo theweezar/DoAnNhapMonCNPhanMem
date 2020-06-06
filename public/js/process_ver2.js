@@ -1,5 +1,30 @@
 $(function(){
   const socket = io();
+  // Connect to someone throught a chat box
+  FRAME.friendTag.click(function(e){
+    e.preventDefault();
+    var url = $(this).attr("href");
+    history.pushState("","",url);
+    if ($(this).attr("rcv-type") === "user"){
+      $.ajax({
+        type:"POST",
+        url:url,
+        data:{
+
+        },
+        success: function(rs){
+          loadHistoryChat(rs);
+          // If there are some msg which aren't read, we will make it "seen"
+          $(`a[role='link'][data-username='${url.split("/")[3]}']`)
+          .find("#lst-msg")
+          .removeAttr("style");
+        }
+      })
+    }
+    else if($(this).attr("rcv-type") === "group"){
+      socket.emit("USER_CONNECT_GROUP",{});
+    }
+  });
   // ==================================================================================
   // WHEN YOU SEND A MSG TO YOUR FRIEND
   FRAME.textArea.keyup(function(e){ // Type enter and the msg will be sent to server
@@ -65,31 +90,83 @@ $(function(){
     reLoadContactList(d.senderUsername);
   });
   // ====================================================================================
-  // Connect to someone throught a chat box
-  FRAME.friendTag.click(function(e){
-    e.preventDefault();
-    var url = $(this).attr("href");
-    history.pushState("","",url);
-    if ($(this).attr("rcv-type") === "user"){
-      $.ajax({
-        type:"POST",
-        url:url,
-        data:{
-
-        },
-        success: function(rs){
-          loadHistoryChat(rs);
-          // If there are some msg which aren't read, we will make it "seen"
-          $(`a[role='link'][data-username='${url.split("/")[3]}']`)
-          .find("#lst-msg")
-          .removeAttr("style");
-        }
-      })
+  // UploadBtn is clicked
+  $("#fileUpload").change(function(){
+    let reader = new FileReader();
+    const fileExtList = ["jpg","png","jpeg"];
+    if (this.files[0]){
+      reader.readAsDataURL(this.files[0]);
     }
-    else if($(this).attr("rcv-type") === "group"){
-      socket.emit("USER_CONNECT_GROUP",{});
+    reader.onloadend = () => {
+      console.log(this.files[0]);
+      // console.log(reader.result);
+      let base64file = reader.result;
+      let fileExt = this.files[0].name.match(/\w+$/g)[0];
+      let type = "";
+      // This file must be smaller than 25mb
+      if (this.files[0].size < 1024 * 1024 * 25){
+        FRAME.previewUploadFrame.removeAttr("style");
+        if (fileExtList.includes(fileExt)) FRAME.previewUploadFile.attr("src",reader.result);
+        else FRAME.previewUploadFile.attr("src","../../icon/Filetype-Docs-icon.png");
+        FRAME.discardUploadFile.click(function(e){
+          FRAME.previewUploadFrame.css({"display":"none"});
+          FRAME.previewUploadFile.attr("src","");
+        });
+        FRAME.sendUploadFile.click(function(e){
+          FRAME.previewUploadFrame.css({"display":"none"});
+          FRAME.previewUploadFile.attr("src","");
+          socket.emit("FILE_USER_TO_USER",{
+            senderUsername: USERNAME,
+            rcvUsername: window.location.pathname.split("/")[3],
+            base64file: base64file,
+            fileExt: fileExt
+          });
+        })
+      }
     }
   });
 
+  // ===================================================================================
+  // TYPING TO FIND FRIEND
+  FRAME.findFriend.on("keyup", function(e){
+    if (e.keyCode === 13 && $(this).val().trim().length !== 0){
+      // socket.emit("FIND_PEOPLE",{keyName: $(this).val().trim()});
+      $.ajax({
+        type: "POST",
+        url:"/findfriend",
+        data:{
+          keyName :$(this).val().trim()
+        },
+        success: function(rs){
+          console.log(rs);
+          loadFoundPeople(rs)
+          $('div[role="req"]').click(function(e){
+            console.log($(this).parent().parent().attr("data-username"));
+            // socket.emit("SEND_REQUEST",{
+              // fromUsername: USERNAME,
+              // fromID: ID,
+              // toUsername: $(this).parent().parent().attr("data-username")
+            // });
+            $.ajax({
+              type:"POST",
+              url:"/requestaddfriend",
+              data:{
+                toUsername: $(this).parent().parent().attr("data-username")
+              },
+              success: function(e){
 
+              }
+            })
+            $(this).attr("class","wait").text("Waiting...");
+          });
+          $("span[id='answer']").click(function(e){
+            // socket.emit("SEND_ANSWER",{
+            //   fromUsername: USERNAME,
+            //   toUsername: $(this).parent().parent().parent().attr("data-username")
+            // });
+          })
+        }
+      })
+    }
+  });
 })
