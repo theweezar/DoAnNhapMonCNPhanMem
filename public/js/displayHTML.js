@@ -114,3 +114,17 @@ function loadFoundFriend(fList = []){
     )
   });
 }
+
+function loadFriendToAddGroup(fList = []){
+  fList.forEach(f => {
+    $("ul#listpeople").append(
+      `<li class="row py-1">
+        <div class="col-lg-1 ">ava</div>
+        <div class="col-lg-9 ">${f.fullname}</div>
+        <div data-people-id="${f.id}" class="col-lg-2 ">
+          <button class="btn btn-success" id="addpeople">Add</button>
+        </div>
+      </li>`
+    )
+  });
+}

@@ -211,10 +211,20 @@ app.get("/app/chat/:group", mdW.redirectLogin, (req, res) => {
   res.end();
 })
 
-app.post("/getfriendtoaddtogroup", (req ,res) => {
+app.post("/getfriendtoaddtogroup", (req, res) => {
   friendTb.getFriends(req.session.userID)
   .then(rs => res.send(rs))
   .catch(err => {throw err});
+})
+
+app.post("/searchfriendtoaddgroup", (req, res) => {
+  friendTb.find(req.session.userID, req.body.clue)
+  .then(rs => res.send(rs))
+  .catch(err => {throw err});
+})
+
+app.post("/addtogroup", (req, res) => {
+  
 })
 
 const server = app.listen(PORT,() => {

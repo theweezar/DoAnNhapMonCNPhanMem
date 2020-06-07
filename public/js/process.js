@@ -195,17 +195,30 @@ $(function(){
       url:"/getfriendtoaddtogroup",
       success: function(rs){
         console.log(rs);
-        rs.forEach(f => {
-          $("ul#listpeople").append(
-            ``
-          )
-        });
+        loadFriendToAddGroup(rs);
       }
     })
   });
   $("#closeBtn").click(function(){
     $("#reg-g-f").attr("style","display: none");
   });
+  $("input#searchfriendtoaddgroup").keyup(function(e){
+    if (e.keyCode == 13 && $(this).val().trim() != ""){
+      $.ajax({
+        type:"POST",
+        url:"/searchfriendtoaddgroup",
+        data:{
+          clue: $(this).val().trim()
+        },
+        success: (rs) => {
+          console.log(rs);
+          $("ul#listpeople").html("");
+          loadFriendToAddGroup(rs);
+          $(this).val("");
+        }
+      })
+    }
+  })
   $("#inpfFriend").on("keyup", function(){
     if ($(this).val().trim() !== ""){
       socket.emit("FIND_FRIEND",{

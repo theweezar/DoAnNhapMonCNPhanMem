@@ -383,3 +383,11 @@ body{
   padding: 0;
   margin: 0;
 }
+
+.reg-g-f .reg-g-b .list-pp ul .row{
+  padding: 0;
+}
+
+.nopadding{
+  padding: 0 !important;
+}
