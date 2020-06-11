@@ -378,6 +378,11 @@ body{
   cursor: pointer;
 }
 
+.reg-g-f .reg-g-b .list-pp{
+  /* height: 300px; */
+  /* overflow-y: scroll; */
+}
+
 .reg-g-f .reg-g-b .list-pp ul{
   list-style: none;
   padding: 0;
@@ -386,6 +391,20 @@ body{
 
 .reg-g-f .reg-g-b .list-pp ul .row{
   padding: 0;
+}
+
+.reg-g-f .reg-g-b .ip-b{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.reg-g-f .reg-g-b .ip-b .ip-g{
+  padding: 5px 0;
+  background: transparent;
+  outline: none;
+  border: none;
 }
 
 .nopadding{

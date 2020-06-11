@@ -12,7 +12,9 @@ const mysql = require("mysql");
 const table = {
   users: require("./model/users"),
   friends: require("./model/friends"),
-  userMsgDetail: require("./model/user_messages_detail")
+  userMsgDetail: require("./model/user_messages_detail"),
+  groups: require("./model/groups"),
+  groupMembersDetail: require("./model/groups_members_detail")
 };
 const mdW = require("./middleware.js");
 const s = require("./validation");
@@ -31,6 +33,8 @@ conn.connect(err => {
 const userTb = new table.users(conn);
 const friendTb = new table.friends(conn);
 const userMsgDetail = new table.userMsgDetail(conn);
+const groupTb = new table.groups(conn);
+const groupMembersDetail = new table.groupMembersDetail(conn);
 // ============================== Session is here ================================= //
 app.use(session({
   secret:"thisisasecret",
@@ -157,6 +161,8 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
 
 app.get("/app/chat/:username",mdW.redirectLogin, (req, res) => {
   let getData = async (function(){
+    // Set group session empty
+    req.session.group = [];
     // Find user's friend in database and display it in client side
     let friendList = await(friendTb.getFriends(req.session.userID));
     // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
@@ -211,20 +217,75 @@ app.get("/app/chat/:group", mdW.redirectLogin, (req, res) => {
   res.end();
 })
 
+// Return a friend list to create a new group
 app.post("/getfriendtoaddtogroup", (req, res) => {
-  friendTb.getFriends(req.session.userID)
+  let getFriend = async(function(){
+    let fList = await(friendTb.getFriends(req.session.userID));
+    await(function(){
+      fList.map(u => u.isAdd = false);
+    }());
+    return fList;
+  });
+  getFriend()
   .then(rs => res.send(rs))
   .catch(err => {throw err});
 })
 
+// When you close a group creation box
+app.post("/cancelcreategroup", (req, res) => {
+  req.session.group = [];
+  res.send("Cancel create group");
+})
+
+// Find another friend to add to group chat
 app.post("/searchfriendtoaddgroup", (req, res) => {
-  friendTb.find(req.session.userID, req.body.clue)
+  let findFriend = async(function(){
+    // Find friends
+    let find = await(friendTb.find(req.session.userID, req.body.clue));
+    // console.log(find);
+    await(function(){
+      // Check if a friend is added in the group list or not ?
+      console.log(req.session.group);
+      find.map(u => {
+        if (req.session.group.find(e => e.id == u.id) === undefined) u.isAdd = false;
+        else u.isAdd = true;
+      });
+    }());
+    return find;
+  });
+  findFriend()
   .then(rs => res.send(rs))
-  .catch(err => {throw err});
+  .catch(err => {throw err;});
 })
 
+// Select a friend and add to group chat
 app.post("/addtogroup", (req, res) => {
-  
+  let isAdd = undefined;
+  // Add user if that user isn't in list
+  if (req.session.group.find(e => e === req.body.friendId) === undefined) {
+    req.session.group.push({
+      id: req.body.friendId,
+      username: req.body.friendUsername
+    });
+    isAdd = true;
+  }
+  // Remove user if that user is in list
+  else {
+    // Find the position of that user in the list
+    var p = req.session.group.findIndex(e => e.id == req.body.friendId);
+    // Cut into 2 array to remove that user
+    var arr1 = req.session.group.slice(0,p);
+    var arr2 = req.session.group.slice(p+1,);
+    // 
+    req.session.group = arr1.concat(arr2);
+    isAdd = false;
+  }
+  res.send(isAdd);
+})
+
+// Return a list of friends which is in group
+app.post("/getlistfriendingroup", (req, res) => {
+  res.send(req.session.group);
 })
 
 const server = app.listen(PORT,() => {
@@ -388,6 +449,43 @@ io.on("connection",socket => {
     .then(rs => {
       io.emit(`RETURN_FRIEND_TO_${socket.username}`,{friendList: rs});
     });
+  });
+
+  // 2. Create new group
+  socket.on("CREATE_NEW_GROUP", function(d){
+    console.log(d);
+    let groupName = d.listUser.map(u => u.username).toString();
+    console.log(groupName);
+    let creatingGroup = async(function(){
+      await(function(){
+        groupTb.create({
+          userId: socket.userID,
+          groupName: groupName
+        });
+      }());
+      let newGroup = await(groupTb.getLastestGroup());
+      await(function(){
+        console.log(newGroup);
+        groupMembersDetail.add({
+          groupId: newGroup[0].id, 
+          userId: socket.userID,
+          isAdmin: 1
+        });
+        d.listUser.forEach(u => {
+          groupMembersDetail.add({
+            groupId: newGroup[0].id,
+            userId: u.id,
+            isAdmin: 0
+          });
+        });
+      }());
+      // return 
+    });
+    creatingGroup()
+    .then(() => {
+      console.log("done");
+    })
+    .catch(err => err);
   });
   socket.on("disconnect",() => console.log("Disconnect"))
 });

@@ -116,15 +116,53 @@ function loadFoundFriend(fList = []){
 }
 
 function loadFriendToAddGroup(fList = []){
+  $("ul#listpeople").html("");
   fList.forEach(f => {
-    $("ul#listpeople").append(
-      `<li class="row py-1">
-        <div class="col-lg-1 ">ava</div>
-        <div class="col-lg-9 ">${f.fullname}</div>
-        <div data-people-id="${f.id}" class="col-lg-2 ">
-          <button class="btn btn-success" id="addpeople">Add</button>
-        </div>
-      </li>`
-    )
+    if (f.isAdd){ // True
+      $("ul#listpeople").append(
+        `<li class="row py-1">
+          <div class="col-lg-1 col-md-1 col-sm-1">ava</div>
+          <div class="col-lg-8 col-md-8 col-sm-8">${f.fullname}</div>
+          <div data-people-id="${f.id}" class="col-lg-3 col-md-3 col-sm-3">
+            <button class="btn btn-danger" id="addpeople">Remove</button>
+          </div>
+        </li>`
+      )
+    }
+    else{ // False, Undifined
+      $("ul#listpeople").append(
+        `<li class="row py-1">
+          <div class="col-lg-1 col-md-1 col-sm-1">ava</div>
+          <div class="col-lg-8 col-md-8 col-sm-8">${f.fullname}</div>
+          <div data-people-id="${f.id}" data-people-username="${f.username}" class="col-lg-3 col-md-3 col-sm-3">
+            <button class="btn btn-success" id="addpeople">Add</button>
+          </div>
+        </li>`
+      )
+    }
   });
+  $("button#addpeople").click(function(e){
+    $.ajax({
+      type:"POST",
+      url:"/addtogroup",
+      data:{
+        friendId: $(this).parent().attr("data-people-id"),
+        friendUsername: $(this).parent().attr("data-people-username"),
+        role: $(this).parent().attr("role")
+      },
+      success: rs => {
+        // console.log(fList);
+        if (rs) $(this).text("Remove").attr("class","btn btn-danger");
+        else $(this).text("Add").attr("class","btn btn-success");
+        $.ajax({
+          type:"POST",
+          url:"/getlistfriendingroup",
+          success: function(rs){
+            if (rs.length >= 2) $("button#createGroup").removeAttr("disabled");
+            else $("button#createGroup").attr("disabled","disabled");
+          }
+        })
+      }
+    })
+  })
 }

@@ -199,9 +199,15 @@ $(function(){
       }
     })
   });
+  // CANCEL CREATING GROUP
   $("#closeBtn").click(function(){
     $("#reg-g-f").attr("style","display: none");
+    $.ajax({
+      type:"POST",
+      url:"/cancelcreategroup"
+    })
   });
+  // SEARCH FREIND TO ADD IN GROUP LIST
   $("input#searchfriendtoaddgroup").keyup(function(e){
     if (e.keyCode == 13 && $(this).val().trim() != ""){
       $.ajax({
@@ -211,17 +217,32 @@ $(function(){
           clue: $(this).val().trim()
         },
         success: (rs) => {
-          console.log(rs);
-          $("ul#listpeople").html("");
+          // console.log(rs);
           loadFriendToAddGroup(rs);
           $(this).val("");
         }
       })
     }
-  })
+  });
+  // CREATE GROUP BTN IS CLICKED
+  $("button#createGroup").click(function(){
+    $.ajax({
+      type:"POST",
+      url:"/getlistfriendingroup",
+      success: function(rs){
+        if (rs.length >= 2){
+          console.log(rs);
+          socket.emit("CREATE_NEW_GROUP", {
+            listUser: rs,
+            groupName: $("input#nameGroup").val()
+          });
+        }
+      }
+    })
+  });
   $("#inpfFriend").on("keyup", function(){
     if ($(this).val().trim() !== ""){
-      socket.emit("FIND_FRIEND",{
+      soccket.emit("FIND_FRIEND",{
         userID: ID,
         clue: $(this).val().trim()
       });

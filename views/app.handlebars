@@ -168,22 +168,24 @@
       <img id="closeBtn" style="width: 25px; height: auto" src="../../icon/x-icon-png-17.png" alt="">
     </div>
     <div style="text-align: center; margin-top: 10px;">
-      <button class="btn btn-primary">Create group</button>
+      <button id="createGroup" class="btn btn-primary" disabled="disabled">Create group</button>
     </div>
-    <div class="namegroup">
-      <input placeholder="Your group name" type="text" name="nameGroup" id="nameGroup">
-    </div>
-    <div class="search">
-      <input placeholder="Search people" type="text" name="search" id="searchfriendtoaddgroup">
+    <div class="ip-b">
+      <div class="my-1 border-bottom border-dark">
+        <input class="ip-g" placeholder="Your group name" type="text" name="nameGroup" id="nameGroup">
+      </div>
+      <div class="my-1 border-bottom border-dark">
+        <input class="ip-g" placeholder="Search people" type="text" name="search" id="searchfriendtoaddgroup">
+      </div>
     </div>
     <div class="list-pp">
       <ul id="listpeople">
         <li class="row py-1">
-          <div class="col-lg-1">ava</div>
-          <div class="col-lg-9">Name</div>
-          <div class="col-lg-2">
+          {{!-- <div class="col-lg-1">ava</div>
+          <div class="col-lg-8">Name</div>
+          <div class="col-lg-3">
             <button class="btn btn-success">Add</button>
-          </div>
+          </div> --}}
         </li>
       </ul>
     </div>
