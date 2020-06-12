@@ -19,8 +19,16 @@ class Users{
       });
     });
   }
-  getUser(d = {username, email}){
-    if (d.username != undefined){
+  getUser(d = {id, username, email}){
+    if (d.id != undefined){
+      return new Promise((resolve,reject) => {
+        this.conn.query(`SELECT * FROM ${tbName.users} WHERE id='${d.id}'`, (err, rs) => {
+          if (err) reject(err);
+          else resolve(rs);
+        });
+      });
+    }
+    else if (d.username != undefined){
       return new Promise((resolve,reject) => {
         this.conn.query(`SELECT * FROM ${tbName.users} WHERE username='${d.username}'`, (err, rs) => {
           if (err) reject(err);

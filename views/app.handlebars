@@ -30,20 +30,38 @@
             </div>
           </a>
         </li> --}}
-        {{#each data.friendList as |friend index|}}
+        {{#each data.fullList as |e index|}}
+        {{#if e.isUser}}
         <li>
-          <a role="link" data-username="{{friend.username}}" href="/app/chat/{{friend.username}}" rcv-type="user">
+          <a role="link" data-username="{{e.username}}" href="/app/u/{{e.username}}" rcv-type="user">
             <img class="avatar" src="../../icon/PngItem_5167304.png" alt="">
             <div class="in4">
-              <div class="in4-1">{{friend.fullname}}</div>
-              {{#if friend.seenMsg}}
-              <div id="lst-msg" class="in4-2">{{friend.lastestSender}}{{friend.lastestMsg}}<span>18:25</span></div>
+              <div class="in4-1">{{e.fullname}}</div>
+              {{#if e.seenMsg}}
+              <div id="lst-msg" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
               {{else}}
-              <div id="lst-msg" style="font-weight: bold; color: black;" class="in4-2">{{friend.lastestSender}}{{friend.lastestMsg}}<span>18:25</span></div>
+              <div id="lst-msg" style="font-weight: bold; color: black;" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
               {{/if}}
             </div>
           </a>
         </li>
+        {{/if}}
+        {{#if e.isGroup}}
+        <li>
+          <a role="link" data-group-id="{{e.id}}" href="/app/g/{{e.id}}" rcv-type="group">
+            <img class="avatar" src="../../icon/PngItem_5167304.png" alt="">
+            <div class="in4">
+              <div class="in4-1">{{e.name}}</div>
+              {{#if e.seenMsg}}
+              <div id="lst-msg" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
+              {{else}}
+              <div id="lst-msg" style="font-weight: bold; color: black;" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
+              {{/if}}
+            </div>
+          </a>
+        </li>
+        {{/if}}
+        
         {{/each}}
       </ul>
     </div>
@@ -195,6 +213,7 @@
 <script>
   const USERNAME = "{{myUsername}}";
   const ID = "{{myID}}";
+  const url = "{{url}}";
 </script>
 <script src="../../js/variables.js"></script>
 <script src="../../js/displayHTML.js"></script>

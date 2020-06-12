@@ -3,6 +3,7 @@ $(function(){
   // console.log(socket);
   // ==================================================================================
   // WHEN YOU CONNECT TO SERVER
+  history.pushState("","",url);
   socket.emit("CONNECT_TO_SERVER",{
     username:USERNAME,
     userID: ID
@@ -18,11 +19,16 @@ $(function(){
         // Everytime we send a msg to someone, we have to load it on MessageBoxChat
         // and load the lastest msg in the friend tag
         // SEND
-        socket.emit("MESSAGE_USER_TO_USER",{
-          senderUsername: USERNAME,
-          rcvUsername: window.location.pathname.split("/")[3],
-          msg: msg
-        });
+        if (window.location.pathname.split("/")[2] == "u"){
+          socket.emit("MESSAGE_USER_TO_USER",{
+            senderUsername: USERNAME,
+            rcvUsername: window.location.pathname.split("/")[3],
+            msg: msg
+          });
+        }
+        else if (window.location.pathname.split("/")[2] == "g"){
+          alert("group here");
+        }
       }
 
       $(this).val("");
