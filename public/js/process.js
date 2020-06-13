@@ -3,7 +3,7 @@ $(function(){
   // console.log(socket);
   // ==================================================================================
   // WHEN YOU CONNECT TO SERVER
-  history.pushState("","",url);
+  history.pushState("","",URL_);
   socket.emit("CONNECT_TO_SERVER",{
     username:USERNAME,
     userID: ID
@@ -27,7 +27,12 @@ $(function(){
           });
         }
         else if (window.location.pathname.split("/")[2] == "g"){
-          alert("group here");
+          socket.emit("MESSAGE_USER_TO_GROUP",{
+            senderUsername: USERNAME,
+            senderId: ID,
+            groupId: window.location.pathname.split("/")[3],
+            msg: msg
+          })
         }
       }
 
@@ -50,7 +55,9 @@ $(function(){
       senderUsername: USERNAME,
       rcvUsername: d.rcvUsername,
       msg: d.msg,
-      type: d.type
+      type: d.type,
+      isGroup: d.isGroup,
+      groupId: d.groupId
     });
     // Bring your friends to the top whenever you text to them
     reLoadContactList(d.rcvUsername);
@@ -60,9 +67,9 @@ $(function(){
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
     console.log(d);
     // if sender is connecting with this account, we will load the msg in MessageBoxChat
-    if (d.senderUsername === window.location.pathname.split("/")[3]){
+    if (d.senderUsername === window.location.pathname.split("/")[3] || d.groupId === window.location.pathname.split("/")[3]){
       loadMsg(false,{
-        senderUsername: d.senderUsername,
+        senderUsername: d.senderUsername != undefined ? d.senderUsername : d.sender_username,
         rcvUsername: d.rcvUsername,
         msg: d.msg,
         type: d.type
@@ -73,7 +80,9 @@ $(function(){
       senderUsername: d.senderUsername,
       rcvUsername: d.rcvUsername,
       msg: d.msg,
-      type: d.type
+      type: d.type,
+      isGroup: d.isGroup,
+      groupId: d.groupId
     });
     // Bring your friends to the top whenever they text to you
     reLoadContactList(d.senderUsername);
@@ -84,29 +93,38 @@ $(function(){
     e.preventDefault();
     var url = $(this).attr("href");
     history.pushState("","",url);
+    e.preventDefault();
     if ($(this).attr("rcv-type") === "user"){
       socket.emit("USER_CONNECT_USER",{
         senderUsername:USERNAME,
         senderID:ID,
         rcvUsername:url.split("/")[3]
       });
-      socket.emit("MAKE_MSG_SEEN",{
-        senderUsername:USERNAME,
-        rcvUsername:url.split("/")[3]
-      });
+      // If there are some msg which aren't read, we will make it "seen"
+      $(`a[role='link'][data-username='${url.split("/")[3]}']`)
+      .find("#lst-msg")
+      .removeAttr("style");
+      // socket.emit("MAKE_MSG_SEEN",{
+      //   senderUsername:USERNAME,
+      //   rcvUsername:url.split("/")[3]
+      // });
     }
     else if($(this).attr("rcv-type") === "group"){
-      socket.emit("USER_CONNECT_GROUP",{});
+      console.log("group");
+      socket.emit("USER_CONNECT_GROUP",{
+        senderUsername: USERNAME,
+        senderID: ID,
+        groupId: url.split("/")[3]
+      });
+      $(`a[role='link'][data-group-id='${url.split("/")[3]}']`)
+      .find("#lst-msg")
+      .removeAttr("style");
     }
     socket.on(`HISTORY_USER_USER_${USERNAME}`,function(d){
       console.log(d);
       loadHistoryChat(d.historyChat);
       socket.removeListener(`HISTORY_USER_USER_${USERNAME}`);
     });
-    // If there are some msg which aren't read, we will make it "seen"
-    $(`a[role='link'][data-username='${url.split("/")[3]}']`)
-    .find("#lst-msg")
-    .removeAttr("style");
   })
   // ====================================================================================
   // UploadBtn is clicked

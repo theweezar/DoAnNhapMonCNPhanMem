@@ -6,6 +6,11 @@ class GroupsMsgDetail{
     this.conn = connection;
   }
 
+  add(d = {groupId, senderId, content, type:"text"}){
+    this.conn.query(`INSERT INTO ${tbName.groupMsgDetail} (groupId, sender_id, content, type, sent_at)
+    VALUES (${d.groupId},${d.senderId},'${d.content}','${d.type}',now())`, err => err);
+  }
+
   getHistory(groupId){
     return new Promise((resolve, reject) => {
       this.conn.query(`SELECT * FROM ${tbName.groupMsgDetail} AS GMSG WHERE GMSG.groupId = ${groupId}

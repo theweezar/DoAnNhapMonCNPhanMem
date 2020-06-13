@@ -66,11 +66,11 @@ app.use(express.urlencoded({extended:false}));
 
 
 app.get("/",mdW.redirectApp,(req,res) => {
-  // res.render("login");
-  req.session.userID = '1';
-  req.session.username = 'admin';
-  req.session.logged = true;
-  res.redirect("/app");
+  res.render("login");
+  // req.session.userID = '1';
+  // req.session.username = 'admin';
+  // req.session.logged = true;
+  // res.redirect("/app");
 });
 
 app.get("/login",mdW.redirectApp,(req,res) => {
@@ -226,7 +226,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   getEverything()
   .then(rs => {
     // Bug is here
-    console.log(rs);
+    // console.log(rs);
     // if (rs.tLTF[0].recent > rs.tLTG[0].recent) res.redirect(`/app/u/${rs.tLTF[0].username}`);
     // else res.redirect(`/app/g/${rs.tLTG[0].id}`);
     res.render("app",{
@@ -634,5 +634,66 @@ io.on("connection",socket => {
     })
     .catch(err => err);
   });
+
+  // 3. Send message to a group
+  socket.on("MESSAGE_USER_TO_GROUP", function(d){
+    console.log(d);
+    let add2db = async(function(){
+      groupTb.setTimeForLastestMsg(d.groupId);
+      groupMsgDetail.add({
+        groupId: d.groupId,
+        senderId: d.senderId,
+        content: d.msg,
+        type: "text"
+      });
+      let user = await(userTb.getUser({id: d.senderId}));
+      let listUsername = await(groupMembersDetail.get({groupId: d.groupId})).map(e => {
+        let u = await(userTb.getUser({id: e.userid}));
+        return u[0].username;
+      })
+      return {
+        user: user,
+        listUsername: listUsername
+      };
+    })
+    add2db()
+    .then(rs => {
+      let sendData = {
+        groupId: d.groupId,
+        senderId: d.senderId,
+        senderUsername: rs.user[0].username,
+        msg: d.msg,
+        type: "text",
+        isGroup: true
+      }
+      io.emit(`RESPONSE_TO_${d.senderUsername}`, sendData);
+      rs.listUsername.forEach(username => {
+        if (username != socket.username) io.emit(`MESSAGE_TO_${username}`, sendData);
+      })
+    })
+  });
+
+  // 4. Click on group chat
+  socket.on("USER_CONNECT_GROUP", function(d){
+    let getHistory = async(function(){
+      let history = await(groupMsgDetail.getHistory(d.groupId)).map(e => {
+        e.sender_username = await(userTb.getUser({id: e.sender_id}))[0].username;
+        return e;
+      })
+      groupMembersDetail.makeSeen({
+        groupId: d.groupId,
+        userId: socket.userID
+      })
+      return history;
+    });
+    getHistory()
+    .then(rs => {
+      // console.log(rs);
+      io.emit(`HISTORY_USER_USER_${d.senderUsername}`,{
+        historyChat: rs
+      });
+    })
+    .catch(err => err);
+  })
   socket.on("disconnect",() => console.log("Disconnect"))
 });

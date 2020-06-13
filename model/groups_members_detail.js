@@ -11,14 +11,37 @@ class GroupsMembersDetail{
     (${d.groupId},${d.userId}, ${d.isAdmin}, 0)`, err => err);
   }
 
-  getSeen(d = {groupId, userId}){
-    return new Promise((resolve, reject) => {
-      this.conn.query(`SELECT * FROM ${tbName.groupMemberDetail} AS GM WHERE GM.id = ${d.groupId} AND
-      GM.userid = ${d.userId}`, (err, rs) => {
-        if (err) reject(err);
-        else resolve(rs);
-      })
-    });
+  get(d = {groupId, userId}){
+    if (d.groupId != undefined && d.userId == undefined){
+      return new Promise((resolve, reject) => {
+        this.conn.query(`SELECT * FROM ${tbName.groupMemberDetail} AS GM WHERE GM.id = ${d.groupId}`, (err, rs) => {
+          if (err) reject(err);
+          else resolve(rs);
+        })
+      });  
+    }
+    else if (d.groupId == undefined && d.userId != undefined){
+      return new Promise((resolve, reject) => {
+        this.conn.query(`SELECT * FROM ${tbName.groupMemberDetail} AS GM WHERE GM.userid = ${d.userId}`, (err, rs) => {
+          if (err) reject(err);
+          else resolve(rs);
+        })
+      });
+    }
+    else if (d.groupId != undefined && d.userId != undefined){
+      return new Promise((resolve, reject) => {
+        this.conn.query(`SELECT * FROM ${tbName.groupMemberDetail} AS GM WHERE GM.id = ${d.groupId} AND
+        GM.userid = ${d.userId}`, (err, rs) => {
+          if (err) reject(err);
+          else resolve(rs);
+        })
+      });
+    }
+  }
+
+  makeSeen(d = {groupId, userId}){
+    this.conn.query(`UPDATE ${tbName.groupMemberDetail} SET seen = 1 WHERE id = ${d.groupId} AND
+    userid = ${d.userId}`, err => err);
   }
 }
 

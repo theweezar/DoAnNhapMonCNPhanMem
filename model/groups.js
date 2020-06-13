@@ -41,6 +41,10 @@ class Groups{
     });
   }
 
+  setTimeForLastestMsg(groupid){
+    this.conn.query(`UPDATE ${tbName.groups} SET recent = now() WHERE id = ${groupid}`, err => err);
+  }
+
 }
 
 module.exports = Groups;

@@ -1,4 +1,4 @@
-function loadMsg(isSender,d = {senderUsername, rcvUsername, msg, type}){
+function loadMsg(isSender,d = {senderUsername, rcvUsername, msg, type, isGroup, groupId}){
   let msgHTML = "";
   if (d.type == "text") msgHTML = `<p>${d.msg}</p>`;
   else if (d.type == "img") msgHTML = `<img src="../../${d.msg}" alt="" srcset="">`;
@@ -33,19 +33,30 @@ function loadMsg(isSender,d = {senderUsername, rcvUsername, msg, type}){
   }
 }
 
-function loadLastestMsgInFriendTag(d = {senderUsername, rcvUsername, msg, type}){
+function loadLastestMsgInFriendTag(d = {senderUsername, rcvUsername, msg, type, isGroup, groupId}){
   // Load lastest msg in all friendTag
   // If the sender is the one who is connecting with this account, this func will load
   // the msg unhighlight
+  let there, here;
+  // there means is not connect through box chat
+  // here means is connecting through box chat
+  if (d.isGroup){
+    there = $(`a[role='link'][data-group-id='${d.groupId}']`);
+    here = $(`a[role='link'][data-group-id='${location.pathname.split("/")[3]}']`); 
+  }
+  else{
+    there = $(`a[role='link'][data-username='${d.senderUsername}']`);
+    here = $(`a[role='link'][data-username='${location.pathname.split("/")[3]}']`);
+  }
   if (d.senderUsername === location.pathname.split("/")[3] || d.senderUsername === USERNAME){
-    $(`a[role='link'][data-username='${location.pathname.split("/")[3]}']`)
+    here
     .find("#lst-msg")
     .text(`${d.senderUsername}: ${d.type == "text" ? d.msg:"File"}`);
     // console.log(USERNAME);
   }
   // If not, this func will load the msg and highlight it
   else{
-    $(`a[role='link'][data-username='${d.senderUsername}']`)
+    there
     .find("#lst-msg")
     .text(`${d.senderUsername}: ${d.type == "text" ? d.msg:"File"}`)
     .css({
