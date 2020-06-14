@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2020 at 11:23 AM
+-- Generation Time: Jun 14, 2020 at 05:19 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -41,10 +41,10 @@ CREATE TABLE `friends` (
 --
 
 INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `accept`, `recent`) VALUES
-(1, 1, 3, 1, '2020-04-29 02:53:43'),
-(2, 4, 1, 1, '2020-04-22 10:23:35'),
-(3, 1, 5, 1, '2020-04-22 10:23:50'),
-(4, 3, 5, 1, '2020-04-18 04:09:04'),
+(1, 1, 3, 1, '2020-06-12 12:33:44'),
+(2, 4, 1, 1, '2020-06-05 04:17:00'),
+(3, 1, 5, 1, '2020-06-06 02:40:59'),
+(4, 3, 5, 1, '2020-06-12 09:49:32'),
 (5, 1, 8, 0, '2020-04-23 12:28:27'),
 (6, 5, 8, 0, '2020-04-23 13:46:00'),
 (7, 3, 8, 0, '2020-04-23 13:46:23');
@@ -57,10 +57,18 @@ INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `accept`, `recent`) VALUES
 
 CREATE TABLE `groups` (
   `id` int(11) NOT NULL,
-  `creator` varchar(20) NOT NULL,
+  `creatorid` int(11) NOT NULL,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `recent` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `groups`
+--
+
+INSERT INTO `groups` (`id`, `creatorid`, `name`, `recent`) VALUES
+(6, 1, 'truc_dong,dai_ga_vl', '2020-06-13 04:22:37'),
+(7, 3, 'truc_dong,admin', '2020-06-13 03:24:17');
 
 -- --------------------------------------------------------
 
@@ -70,9 +78,22 @@ CREATE TABLE `groups` (
 
 CREATE TABLE `groups_members_detail` (
   `id` int(11) NOT NULL,
-  `username` varchar(20) NOT NULL,
-  `isAdmin` tinyint(1) NOT NULL
+  `userid` int(11) NOT NULL,
+  `isAdmin` tinyint(1) NOT NULL,
+  `seen` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `groups_members_detail`
+--
+
+INSERT INTO `groups_members_detail` (`id`, `userid`, `isAdmin`, `seen`) VALUES
+(6, 1, 1, 1),
+(6, 5, 0, 0),
+(6, 3, 0, 1),
+(7, 3, 1, 1),
+(7, 5, 0, 0),
+(7, 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -83,11 +104,34 @@ CREATE TABLE `groups_members_detail` (
 CREATE TABLE `groups_messages_detail` (
   `id` int(11) NOT NULL,
   `groupId` int(11) NOT NULL,
-  `sender_username` varchar(20) NOT NULL,
+  `sender_id` int(11) NOT NULL,
   `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `sent_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `groups_messages_detail`
+--
+
+INSERT INTO `groups_messages_detail` (`id`, `groupId`, `sender_id`, `content`, `type`, `sent_at`) VALUES
+(1, 6, 1, 'h', 'text', '2020-06-12 15:25:09'),
+(2, 6, 1, 'l', 'text', '2020-06-13 02:43:27'),
+(3, 7, 1, 'p', 'text', '2020-06-13 02:43:38'),
+(4, 7, 1, 'alo', 'text', '2020-06-13 03:20:19'),
+(5, 7, 1, 'zo', 'text', '2020-06-13 03:24:17'),
+(6, 6, 1, 'testing', 'text', '2020-06-13 03:25:44'),
+(7, 6, 1, 'asjd iaj diqj dioajsiod jqiojdoiqjdoisaj doiqj iodq idjqoiwdj qijdoiqdioqjdoijqidjwqoid jdj iqjdioqw', 'text', '2020-06-13 03:28:05'),
+(8, 6, 1, 'k', 'text', '2020-06-13 03:28:16'),
+(9, 6, 1, 'pl', 'text', '2020-06-13 03:49:11'),
+(10, 6, 3, 'shit', 'text', '2020-06-13 03:59:54'),
+(11, 6, 3, 'try', 'text', '2020-06-13 04:08:10'),
+(12, 6, 1, 'ag', 'text', '2020-06-13 04:19:28'),
+(13, 6, 1, 't', 'text', '2020-06-13 04:19:44'),
+(14, 6, 1, 'test', 'text', '2020-06-13 04:21:00'),
+(15, 6, 3, 'ngon', 'text', '2020-06-13 04:21:11'),
+(16, 6, 1, 's', 'text', '2020-06-13 04:22:30'),
+(17, 6, 3, 's', 'text', '2020-06-13 04:22:37');
 
 -- --------------------------------------------------------
 
@@ -109,14 +153,15 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `fullname`, `gender`) VALUES
-(1, 'admin', 'Adminpro3010', 'minhduc@gmail.com', 'Minh Duc', 1),
+(1, 'admin', 'admin', 'minhduc@gmail.com', 'Minh Duc', 1),
 (3, 'dai_ga_vl', 'Daigavl3008', 'Dai@gmail.com', 'Phan Dai', 1),
 (4, 'ngoctrinhsexy', 'Ngoctrinhsexy90', 'ngoctrinh@gmail.com', 'Ngoc Trinh', 0),
 (5, 'truc_dong', 'Trucdong99', 'trucdong@gmail.com', 'Truc Dong', 1),
 (6, 'toanhkhoa', 'Khoato2712', 'khoato@gmail.com', 'To Anh Khoa', 1),
 (7, 'tranminhduc', 'Minhduc12345', 'ductran@yahoo.com', 'Tran Minh Duc', 1),
 (8, 'nguyenminhduc', 'Minhduc12345', 'ducnguyen@gmail.com', 'Nguyen Minh Duc', 1),
-(9, 'trannhatduc', 'Nhatduc12345', 'nhatduc@yahoo.com', 'Tran Nhat Duc', 1);
+(9, 'trannhatduc', 'Nhatduc12345', 'nhatduc@yahoo.com', 'Tran Nhat Duc', 1),
+(10, 'trungtinh', 'Trungtinh123', 'trungtinh@gmail.com', 'nguyen trung tinh', 1);
 
 -- --------------------------------------------------------
 
@@ -211,7 +256,32 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (71, 'admin', 'hi', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:23:35'),
 (72, 'admin', 't', 'truc_dong', 'text', 1, '2020-04-22 10:23:44'),
 (73, 'admin', 'y', 'truc_dong', 'text', 1, '2020-04-22 10:23:50'),
-(74, 'admin', 't', 'dai_ga_vl', 'text', 0, '2020-04-29 02:53:43');
+(74, 'admin', 't', 'dai_ga_vl', 'text', 1, '2020-04-29 02:53:43'),
+(75, 'admin', 'apok', 'dai_ga_vl', 'text', 1, '2020-05-27 07:21:19'),
+(76, 'dai_ga_vl', 'kjdfhaslfkdjhasf', 'admin', 'text', 1, '2020-05-27 08:53:13'),
+(77, 'admin', 'sdfsdf', 'dai_ga_vl', 'text', 1, '2020-05-27 08:53:46'),
+(78, 'dai_ga_vl', 'sdalfkjas', 'admin', 'text', 1, '2020-05-27 08:53:52'),
+(79, 'dai_ga_vl', 'img/xpulvfloei.jpg', 'admin', 'img', 1, '2020-05-27 08:54:00'),
+(80, 'admin', 'uhuhu', 'truc_dong', 'text', 1, '2020-05-27 08:54:19'),
+(81, 'admin', 'img/nkvohzobzs.png', 'dai_ga_vl', 'img', 1, '2020-05-27 08:55:09'),
+(82, 'dai_ga_vl', 'fghfd', 'admin', 'text', 1, '2020-05-27 08:55:31'),
+(83, 'dai_ga_vl', 'fjlksahflkja', 'admin', 'text', 1, '2020-05-27 08:55:35'),
+(84, 'dai_ga_vl', 'lkdf', 'admin', 'text', 1, '2020-05-27 08:55:37'),
+(85, 'dai_ga_vl', 'dfl;kj', 'admin', 'text', 1, '2020-05-27 08:55:38'),
+(86, 'admin', 'lo', 'dai_ga_vl', 'text', 1, '2020-06-05 03:52:29'),
+(87, 'admin', 'ok', 'dai_ga_vl', 'text', 1, '2020-06-05 03:53:12'),
+(88, 'admin', 'alo', 'dai_ga_vl', 'text', 1, '2020-06-05 04:05:15'),
+(89, 'admin', 'wdw', 'truc_dong', 'text', 1, '2020-06-05 04:06:17'),
+(90, 'admin', 'w', 'truc_dong', 'text', 1, '2020-06-05 04:06:23'),
+(91, 'admin', 'test1', 'ngoctrinhsexy', 'text', 1, '2020-06-05 04:10:29'),
+(92, 'admin', 'test2', 'ngoctrinhsexy', 'text', 1, '2020-06-05 04:17:00'),
+(93, 'admin', 'test4', 'dai_ga_vl', 'text', 1, '2020-06-05 04:17:11'),
+(94, 'admin', 'pkiuhj', 'truc_dong', 'text', 1, '2020-06-06 01:50:31'),
+(95, 'admin', 'img/qczeeohkqn.png', 'ngoctrinhsexy', 'img', 1, '2020-06-06 01:59:08'),
+(96, 'admin', 'img/aodhxkmjbv.jpg', 'ngoctrinhsexy', 'img', 1, '2020-06-06 02:28:03'),
+(97, 'admin', 's', 'truc_dong', 'text', 1, '2020-06-06 02:40:59'),
+(98, 'dai_ga_vl', 'what', 'truc_dong', 'text', 0, '2020-06-12 09:49:32'),
+(99, 'admin', 'lo', 'dai_ga_vl', 'text', 1, '2020-06-12 12:33:44');
 
 --
 -- Indexes for dumped tables
@@ -230,14 +300,14 @@ ALTER TABLE `friends`
 --
 ALTER TABLE `groups`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `creator` (`creator`);
+  ADD KEY `creatorid` (`creatorid`);
 
 --
 -- Indexes for table `groups_members_detail`
 --
 ALTER TABLE `groups_members_detail`
   ADD KEY `id` (`id`),
-  ADD KEY `username` (`username`);
+  ADD KEY `userid` (`userid`);
 
 --
 -- Indexes for table `groups_messages_detail`
@@ -245,7 +315,7 @@ ALTER TABLE `groups_members_detail`
 ALTER TABLE `groups_messages_detail`
   ADD PRIMARY KEY (`id`),
   ADD KEY `groupId` (`groupId`),
-  ADD KEY `sender_username` (`sender_username`);
+  ADD KEY `sender_id` (`sender_id`);
 
 --
 -- Indexes for table `users`
@@ -277,25 +347,25 @@ ALTER TABLE `friends`
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `groups_messages_detail`
 --
 ALTER TABLE `groups_messages_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `user_messages_detail`
 --
 ALTER TABLE `user_messages_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- Constraints for dumped tables
@@ -312,21 +382,21 @@ ALTER TABLE `friends`
 -- Constraints for table `groups`
 --
 ALTER TABLE `groups`
-  ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`creator`) REFERENCES `users` (`username`);
+  ADD CONSTRAINT `groups_ibfk_1` FOREIGN KEY (`creatorid`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `groups_members_detail`
 --
 ALTER TABLE `groups_members_detail`
   ADD CONSTRAINT `groups_members_detail_ibfk_1` FOREIGN KEY (`id`) REFERENCES `groups` (`id`),
-  ADD CONSTRAINT `groups_members_detail_ibfk_2` FOREIGN KEY (`username`) REFERENCES `users` (`username`);
+  ADD CONSTRAINT `groups_members_detail_ibfk_2` FOREIGN KEY (`userid`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `groups_messages_detail`
 --
 ALTER TABLE `groups_messages_detail`
   ADD CONSTRAINT `groups_messages_detail_ibfk_1` FOREIGN KEY (`groupId`) REFERENCES `groups` (`id`),
-  ADD CONSTRAINT `groups_messages_detail_ibfk_2` FOREIGN KEY (`sender_username`) REFERENCES `users` (`username`);
+  ADD CONSTRAINT `groups_messages_detail_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `user_messages_detail`
