@@ -5,9 +5,9 @@ class Users{
   constructor(connection = mysql.createConnection()){
     this.conn = connection;
   }
-  addUser(username,password,email,fullname,gender){
-    this.conn.query(`INSERT INTO ${tbName.users} (username,password,email,fullname,gender) VALUES
-    ('${username}','${password}','${email}','${fullname}',${gender})`, err => {
+  addUser(username,password,email,fullname){
+    this.conn.query(`INSERT INTO ${tbName.users} (username,password,email,fullname) VALUES
+    ('${username}','${password}','${email}','${fullname}')`, err => {
       if (err) throw err;
     });
   }

@@ -26,7 +26,7 @@
             <img class="avatar" src="icon/PngItem_5167304.png" alt="">
             <div class="in4">
               <div class="in4-1">Admin</div>
-              <div class="in4-2">Hello world...<span>18:25</span></div>
+              <div class="in4-2">Hello world...</div>
             </div>
           </a>
         </li> --}}
@@ -38,9 +38,9 @@
             <div class="in4">
               <div class="in4-1">{{e.fullname}}</div>
               {{#if e.seenMsg}}
-              <div id="lst-msg" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
+              <div id="lst-msg" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}</div>
               {{else}}
-              <div id="lst-msg" style="font-weight: bold; color: black;" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
+              <div id="lst-msg" style="font-weight: bold; color: black;" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}</div>
               {{/if}}
             </div>
           </a>
@@ -53,9 +53,9 @@
             <div class="in4">
               <div class="in4-1">{{e.name}}</div>
               {{#if e.seenMsg}}
-              <div id="lst-msg" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
+              <div id="lst-msg" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}</div>
               {{else}}
-              <div id="lst-msg" style="font-weight: bold; color: black;" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}<span>18:25</span></div>
+              <div id="lst-msg" style="font-weight: bold; color: black;" class="in4-2">{{e.lastestSender}}{{e.lastestMsg}}</div>
               {{/if}}
             </div>
           </a>
@@ -126,6 +126,9 @@
                     {{#if this.img}}
                     <img src="../../{{this.content}}" alt="" srcset="">
                     {{/if}}
+                    {{#if this.file}}
+                    <a href="../../{{this.link}}">{{this.fileName}}</a>
+                    {{/if}}
                   </div>
                 </div>
                 <div class="sent-ava">
@@ -145,6 +148,9 @@
                     {{#if this.img}}
                     <img src="../../{{this.content}}" alt="" srcset="">
                     {{/if}}
+                    {{#if this.file}}
+                    <a href="../../{{this.link}}">{{this.fileName}}</a>
+                    {{/if}}
                   </div>
                 </div>
               </div>
@@ -157,7 +163,7 @@
           <img width="25px" src="../../icon/smile-solid.svg" alt="" srcset="">
         </div>
         <div class="f-icon">
-          <input type="file" name="fileUpload" id="fileUpload" accept="audio/*,video/*,image/*,.pdf,.docx">
+          <input type="file" name="fileUpload" id="fileUpload" accept="*">
           <label for="fileUpload">
             <img width="20px" src="../../icon/file-solid.svg" alt="" srcset="">
           </label>

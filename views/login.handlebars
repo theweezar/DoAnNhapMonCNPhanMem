@@ -1,14 +1,24 @@
-<div class="login-box">
-  <form action="/login" method="post">
+<div class="wallpp"></div>
+<div class="account-page">
+  <div class="title-1">Sign In</div>
+  <form action="./login" method="POST">
     <div class="ip-g">
-      <input placeholder="Username" type="text" name="username" id="">
+      <div class="title-2">Username</div>
+      <input required="required" class="ip" placeholder="Username" id="" name="username"/>
     </div>
     <div class="ip-g">
-      <input placeholder="Password" type="password" name="password" id="">
+      <div class="title-2">Password</div>
+      <input required="required" type="password" class="ip" placeholder="Password" id="" name="password"/>
     </div>
-    <div>
-      <input type="submit" value="Login">
+    <div class="ip-g center">
+      <button type="submit">Login</button>
     </div>
+    <table class="option">
+      <tr>
+        {{!-- <td><a href="./forgetpw.htm">*Forget password</a></td> --}}
+        <td><a href="./register">Register</a></td>
+      </tr>
+    </table>
   </form>
 </div>
 

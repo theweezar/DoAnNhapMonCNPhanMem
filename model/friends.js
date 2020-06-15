@@ -16,6 +16,11 @@ class Friends{
     userId_1 = ${userID1} AND userId_2 = ${userID2} OR
     userId_1 = ${userID2} AND userId_2 = ${userID1}`, err => err);
   }
+  decline(userID1, userID2){
+    this.conn.query(`DELETE FROM ${tbName.friends} WHERE 
+    userId_1 = ${userID1} AND userId_2 = ${userID2} OR
+    userId_1 = ${userID2} AND userId_2 = ${userID1} `, err => err);
+  }
   getTheLastestTextedFriend(userID){
     return new Promise((resolve, reject) => {
       this.conn.query(`SELECT * FROM ${tbName.friends} JOIN ${tbName.users} ON 

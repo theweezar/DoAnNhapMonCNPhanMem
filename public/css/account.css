@@ -1,0 +1,96 @@
+html, body{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+.wallpp{
+	position: absolute;
+	width:100%;
+	height:100%;
+	background-color: #1C8EF8;
+}
+
+.account-page{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.account-page{
+	width: 40%;
+	padding: 25px 0;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-radius: 5px;
+	color: black;
+}
+
+.account-page .title-1{
+	margin-bottom: 10px;
+	font-size: 110%;
+	font-weight: bold;
+}
+
+.account-page form .ip-g{
+	margin: 5px 0;
+	width: 350px;
+}
+
+.account-page form .ip-g .title-2{
+	margin: 5px 0 5px 0;
+}
+
+.account-page form .ip-g .ip{
+	background: white;
+	border: 1px solid lightgray;
+	padding: 7px 14px;
+	outline: none;
+	color: black;
+	font-size: 90%;
+	width: 100%;
+	border-radius: 5px;
+}
+
+.account-page form .ip-g .ip::placeholder{
+	color: lightgray;
+}
+
+.account-page form .ip-g .ip:focus{
+	border: 1px solid gray;
+}
+
+.account-page form .ip-g button{
+	color: white;
+	background: #177BFD;
+	border: none;
+	font-size: 90%;
+	padding: 10px 15px;
+	width: 50%;
+	border: 1px solid #177BFD;
+	border-radius: 5px;
+	outline: none;
+	margin: 5px 0 5px 0;
+}
+
+.account-page form .ip-g .err{
+	color: red;
+	font-size: 90%;
+}
+
+.center{
+	text-align: center;
+}
+
+.account-page form table{
+	width: 100%;
+}
+
+.account-page form a{
+	text-decoration: none;
+	color: darkgray;
+}

@@ -1,8 +1,9 @@
 function loadMsg(isSender,d = {senderUsername, rcvUsername, msg, type, isGroup, groupId}){
   let msgHTML = "";
-  console.log(d);
+  // console.log(d);
   if (d.type == "text") msgHTML = `<p>${d.msg}</p>`;
   else if (d.type == "img") msgHTML = `<img src="../../${d.msg}" alt="" srcset="">`;
+  else if (d.type == "file") msgHTML = `<a href="../../${d.msg.split(":")[0]}">${d.msg.split(":")[1]}</a>`;
   if (isSender){
     // Load msg in current MessageBoxchat
     FRAME.msgBox.append(

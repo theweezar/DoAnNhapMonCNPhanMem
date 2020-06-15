@@ -103,13 +103,12 @@ app.get("/register",mdW.redirectApp,(req,res) => {
 app.post("/register",(req,res) => {
   let firstName = s.validateName(req.body.firstName.trim());
   let lastName = s.validateName(req.body.lastName.trim());
-  let gender = (req.body.gender === "0" || req.body.gender === "1" ? req.body.gender:"");
-  let username = (req.body.username.length >= 9 && req.body.username.length <= 20 ? s.validateString(req.body.username.trim()):"");
+  let username = s.validateString(req.body.username.trim());
   let email = s.validateEmail(req.body.email.trim());
   let password = s.validatePassword(req.body.password.trim());
   let rePassword = s.validatePassword(req.body.rePassword.trim());
   if (
-    firstName !== "" && lastName !== "" && gender !== "" && username !== "" &&
+    firstName !== "" && lastName !== "" && username !== "" &&
     email !== "" && password !== "" && rePassword !== ""
   ){
     // Check if all this attributes are existed or not ?
@@ -124,11 +123,11 @@ app.post("/register",(req,res) => {
     checkExist()
     .then(rs => {
       if (rs.checkUsername.length !== 0) res.render("/register",{usernameErr: true});
-      else if (rs.checkUsername.length !== 0) res.render("/register",{emailErr: true});
+      else if (rs.checkEmail.length !== 0) res.render("/register",{emailErr: true});
       else if (password !== rePassword) res.render("/register",{passwordErr: true});
       else{
         let fullname = `${firstName} ${lastName}`;
-        userTb.addUser(username, password, email, fullname, gender);
+        userTb.addUser(username, password, email, fullname);
         res.redirect("/login");
       }
     })
@@ -152,6 +151,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
   req.session.group = [];
   let getEverything = async (function(){
     // The lastest texted friend
+    let url = "";
     let tLTF = await(friendTb.getTheLastestTextedFriend(req.session.userID));
     let tLTG = await(groupTb.getLastestTextedGroup(req.session.userID));
     let historyChat = undefined;
@@ -165,30 +165,55 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
     });
     // Sort by .recent of both lists DESC. To show in contact list on front end
     let fullList = friendList.concat(groupList);
-    fullList.sort((t1, t2) => {return t2.recent - t1.recent});
+    if (fullList.length > 1) fullList.sort((t1, t2) => {return t2.recent - t1.recent});
     // console.log(fullList);
     // Get history of the fullList
     // If the lastest sender is a user
-    if (tLTF[0].recent > tLTG[0].recent) {
-      historyChat = await(userMsgDetail.getHistory(req.session.username, tLTF[0].username)).map(row => {
-        if (row.sender_username == req.session.username) row.isSender = true;
-        else row.isSender = false;
-        if (row.type == "text") row.text = true;
-        else if (row.type == "img") row.img = true;
-        return row;
-      })
+    if (tLTF.length != 0 || tLTG.length != 0){
+      url = `/app/u/${tLTF[0].username}`;
+      if (tLTG.length == 0){
+        historyChat = await(userMsgDetail.getHistory(req.session.username, tLTF[0].username)).map(row => {
+          if (row.sender_username == req.session.username) row.isSender = true;
+          else row.isSender = false;
+          if (row.type == "text") row.text = true;
+          else if (row.type == "img") row.img = true;
+          else if (row.type == "file") row.file = true;
+          return row;
+        });
+      }
+      if (tLTF[0].recent > tLTG[0].recent ) {
+        historyChat = await(userMsgDetail.getHistory(req.session.username, tLTF[0].username)).map(row => {
+          if (row.sender_username == req.session.username) row.isSender = true;
+          else row.isSender = false;
+          if (row.type == "text") row.text = true;
+          else if (row.type == "img") row.img = true;
+          else if (row.type == "file") {
+            row.file = true;
+            row.fileName = row.content.split(":")[1];
+            row.link = row.content.split(":")[0];
+          }
+          return row;
+        });
+      }
+      // else the lastest sender is in a group
+      else{
+        url = `/app/g/${tLTG[0].id}`;
+        historyChat = await(groupMsgDetail.getHistory(tLTG[0].id)).map(row => {
+          row.sender_username = await(userTb.getUser({id: row.sender_id}))[0].username;
+          if (row.sender_id == req.session.userID) row.isSender = true;
+          else row.isSender = false;
+          if (row.type == "text") row.text = true;
+          else if (row.type == "img") row.img = true;
+          else if (row.type == "file") {
+            row.file = true;
+            row.fileName = row.content.split(":")[1];
+            row.link = row.content.split(":")[0];
+          }
+          return row;
+        });
+      }
     }
-    // else the lastest sender is in a group
-    else{
-      historyChat = await(groupMsgDetail.getHistory(tLTG[0].id)).map(row => {
-        row.sender_username = await(userTb.getUser({id: row.sender_id}))[0].username;
-        if (row.sender_id == req.session.userID) row.isSender = true;
-        else row.isSender = false;
-        if (row.type == "text") row.text = true;
-        else if (row.type == "img") row.img = true;
-        return row;
-      });
-    }
+    
     let allLastestMsg = fullList.map(e => {
       if (e.isUser) return await(userMsgDetail.getLastestMsg(req.session.username, e.username));
       else if (e.isGroup) return await(groupMsgDetail.getLastestMsg(e.id));
@@ -223,22 +248,20 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
       tLTG: tLTG,
       fullList: fullList,
       historyChat: historyChat,
-      allLastestMsg: allLastestMsg
+      allLastestMsg: allLastestMsg,
+      url: url
     };
   });
   getEverything()
   .then(rs => {
-    // Bug is here
-    // console.log(rs);
-    // if (rs.tLTF[0].recent > rs.tLTG[0].recent) res.redirect(`/app/u/${rs.tLTF[0].username}`);
-    // else res.redirect(`/app/g/${rs.tLTG[0].id}`);
+    console.log(rs.historyChat);
     res.render("app",{
       logged: req.session.logged,
       data: rs,
       myUsername: req.session.username,
       myID: req.session.userID,
-      url: rs.tLTF[0].recent > rs.tLTG[0].recent ? `/app/u/${rs.tLTF[0].username}` : `/app/g/${rs.tLTG[0].id}`
-    })
+      url: rs.url
+    });
   })
   .catch(err => {throw err;});
 })
@@ -463,9 +486,10 @@ io.on("connection",socket => {
           // all account in the results or not 
           let row = await(friendTb.getChatID(socket.username, f.username));
           if (row.length == 0) f.connect = undefined;
-          else if (row[0].accept === 1) f.connect = "friend";
-          else if (row[0].accept === 0 && row[0].userId_1 === socket.userID) f.connect = "waiting";
-          else if (row[0].accept === 0) f.connect = "answer";
+          else if (row[0].accept == 1) f.connect = "friend";
+          else if (row[0].accept == 0 && row[0].userId_1 == socket.userID) f.connect = "waiting";
+          else if (row[0].accept == 0) f.connect = "answer";
+          return f;
         })
       }());
       return target;
@@ -482,20 +506,46 @@ io.on("connection",socket => {
     .then(rs => {
       friendTb.request(socket.userID, rs[0].id);
       // response for both who send and who rcv
-      io.emit(`RESPONSE_REQUEST_${d.fromUsername}`,{isReq: true}); // me
-      io.emit(`RESPONSE_REQUEST_${d.toUsername}`,{isReq: false}); // who I request to add friend
+      io.emit(`RESPONSE_REQUEST_${d.fromUsername}`,{
+        isReq: true,
+        fromUsername: d.fromUsername,
+        toUsername: d.toUsername
+      }); // me
+      io.emit(`RESPONSE_REQUEST_${d.toUsername}`,{
+        isReq: false,
+        fromUsername: d.fromUsername,
+        toUsername: d.toUsername
+      }); // who I request to add friend
     })
     .catch(err => err)
   })
 
   // 3. Send and response the answer to decide be friend or not
   socket.on("SEND_ANSWER", d => {
+    let accept = undefined;
     userTb.getUser({username: d.toUsername})
     .then(rs => {
-      friendTb.accept(socket.userID, rs[0].id);
+      if (d.answer == "yes"){
+        accept = true;
+        friendTb.accept(socket.userID, rs[0].id);
+      }
+      else if (d.answer == "no"){
+        accept = false;
+        friendTb.decline(socket.userID, rs[0].id);
+      }
       // response for both who answer and who rcv that answer
-      io.emit(`RESPONSE_ANSWER_${d.fromUsername}`,{isAns: true}); // who answer my request
-      io.emit(`RESPONSE_ANSWER_${d.toUsername}`,{isAns: false}); // me
+      io.emit(`RESPONSE_ANSWER_${d.fromUsername}`,{
+        fromUsername: d.fromUsername,
+        toUsername: d.toUsername,
+        isAns: true,
+        accept: accept
+      }); // who answer my request
+      io.emit(`RESPONSE_ANSWER_${d.toUsername}`,{
+        fromUsername: d.fromUsername,
+        toUsername: d.toUsername,
+        isAns: false,
+        accept: accept
+      }); // me
     })
   })
 
@@ -556,6 +606,7 @@ io.on("connection",socket => {
     let base64file = d.base64file.split(';base64,').pop();
     let isImg = ["jpg","png","jpeg"].includes(d.fileExt);
     let link = isImg ? "img":"others";
+    let typeF = isImg ? "img":"file";
     // genName is a Promise that generate random name for that base64file
     let genName = Promise.resolve(
       // construct a array with length = 10. Then fill it with undifine value
@@ -573,17 +624,34 @@ io.on("connection",socket => {
           if (err) console.log(err);
           else{
             // We just need to save the link of that file which created above
-            userMsgDetail.addMsg({
-              senderUsername: d.senderUsername,
-              rcvUsername: d.rcvUsername,
-              content: `${link}/${newName}.${d.fileExt}`,
-              type:"img"
-            });
-            let sendData = {
-              senderUsername: d.senderUsername,
-              rcvUsername: d.rcvUsername,
-              msg: `${link}/${newName}.${d.fileExt}`,
-              type: "img"
+            let sendData = undefined;
+            if (typeF == "img"){
+              userMsgDetail.addMsg({
+                senderUsername: d.senderUsername,
+                rcvUsername: d.rcvUsername,
+                content: `${link}/${newName}.${d.fileExt}`,
+                type: typeF
+              });
+              sendData = {
+                senderUsername: d.senderUsername,
+                rcvUsername: d.rcvUsername,
+                msg: `${link}/${newName}.${d.fileExt}`,
+                type: typeF
+              }
+            }
+            else if (typeF == "file"){
+              userMsgDetail.addMsg({
+                senderUsername: d.senderUsername,
+                rcvUsername: d.rcvUsername,
+                content: `${link}/${newName}.${d.fileExt}:${d.realName}`,
+                type: typeF
+              });
+              sendData = {
+                senderUsername: d.senderUsername,
+                rcvUsername: d.rcvUsername,
+                msg: `${link}/${newName}.${d.fileExt}:${d.realName}`,
+                type: typeF
+              }
             }
             // Send the image to the receiver
             io.emit(`MESSAGE_TO_${d.rcvUsername}`, sendData);
@@ -708,6 +776,7 @@ io.on("connection",socket => {
     let base64file = d.base64file.split(';base64,').pop();
     let isImg = ["jpg","png","jpeg"].includes(d.fileExt);
     let link = isImg ? "img":"others";
+    let typeF = isImg ? "img":"file";
     // console.log(d);
     // genName is a Promise that generate random name for that base64file
     let process = async(function(){
@@ -724,6 +793,7 @@ io.on("connection",socket => {
     })
     process().then(rs => {
       let newName = rs.newName.toString().replace(/,/g,"");
+      let sendData = undefined;
       // Create that base64file with the name that created above, then save it in folder "files"
       fs.writeFile(
         path.join(__dirname,"files",link,`${newName}.${d.fileExt}`), 
@@ -733,20 +803,39 @@ io.on("connection",socket => {
           if (err) console.log(err);
           else{
             // We just need to save the link of that file which created above
-            groupMsgDetail.add({
-              groupId: d.groupId,
-              senderId: d.senderId,
-              content: `${link}/${newName}.${d.fileExt}`,
-              type:"img"
-            })
-            let sendData = {
-              senderUsername: rs.sendUser[0].username,
-              senderId: d.senderId,
-              isGroup: true,
-              groupId: d.groupId,
-              msg: `${link}/${newName}.${d.fileExt}`,
-              type: "img"
+            if (typeF == "img"){
+              groupMsgDetail.add({
+                groupId: d.groupId,
+                senderId: d.senderId,
+                content: `${link}/${newName}.${d.fileExt}`,
+                type: typeF
+              })
+              sendData = {
+                senderUsername: rs.sendUser[0].username,
+                senderId: d.senderId,
+                isGroup: true,
+                groupId: d.groupId,
+                msg: `${link}/${newName}.${d.fileExt}`,
+                type: typeF
+              }
             }
+            else if (typeF == "file"){
+              groupMsgDetail.add({
+                groupId: d.groupId,
+                senderId: d.senderId,
+                content: `${link}/${newName}.${d.fileExt}:${d.realName}`,
+                type: typeF
+              })
+              sendData = {
+                senderUsername: rs.sendUser[0].username,
+                senderId: d.senderId,
+                isGroup: true,
+                groupId: d.groupId,
+                msg: `${link}/${newName}.${d.fileExt}:${d.realName}`,
+                type: typeF
+              }
+            }
+            
             console.log(sendData);
             
             // Response the image to the sender

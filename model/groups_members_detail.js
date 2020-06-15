@@ -43,6 +43,8 @@ class GroupsMembersDetail{
     this.conn.query(`UPDATE ${tbName.groupMemberDetail} SET seen = 1 WHERE id = ${d.groupId} AND
     userid = ${d.userId}`, err => err);
   }
+
+  
 }
 
 module.exports = GroupsMembersDetail;

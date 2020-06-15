@@ -76,7 +76,7 @@ $(function(){
   // ===================================================================================
   // RECEIVE FROM SOMEONE
   socket.on(`MESSAGE_TO_${USERNAME}`,function(d){
-    console.log(d);
+    // console.log(d);
     // if sender is connecting with this account, we will load the msg in MessageBoxChat
     if (d.senderUsername === window.location.pathname.split("/")[3] || d.groupId === window.location.pathname.split("/")[3]){
       loadMsg(false,{
@@ -162,6 +162,7 @@ $(function(){
       // console.log(reader.result);
       let base64file = reader.result;
       let fileExt = this.files[0].name.match(/\w+$/g)[0];
+      let fileName = this.files[0].name;
       let type = "";
       // This file must be smaller than 25mb
       if (this.files[0].size < 1024 * 1024 * 25){
@@ -181,7 +182,8 @@ $(function(){
               senderUsername: USERNAME,
               rcvUsername: window.location.pathname.split("/")[3],
               base64file: base64file,
-              fileExt: fileExt
+              fileExt: fileExt,
+              realName: fileName
             });
           }
           else if (window.location.pathname.split("/")[2] == "g"){
@@ -190,7 +192,8 @@ $(function(){
               senderId: ID,
               groupId: window.location.pathname.split("/")[3],
               base64file: base64file,
-              fileExt: fileExt
+              fileExt: fileExt,
+              realName: fileName
             });
           }
           
@@ -205,6 +208,9 @@ $(function(){
     if (e.keyCode === 13 && $(this).val().trim().length !== 0){
       socket.emit("FIND_PEOPLE",{keyName: $(this).val().trim()});
     }
+    else if (e.keyCode === 13 && $(this).val().trim().length == 0){
+      window.location.reload();
+    }
   });
 
   // ===================================================================================
@@ -212,7 +218,7 @@ $(function(){
   socket.on(`RETURN_PEOPLE_TO_${USERNAME}`, function(d){
     console.log(d);
     loadFoundPeople(d.rsList);
-    FRAME.reqBtn.click(function(e){
+    $('div[role="req"]').click(function(e){
       console.log($(this).parent().parent().attr("data-username"));
       socket.emit("SEND_REQUEST",{
         fromUsername: USERNAME,
@@ -221,25 +227,48 @@ $(function(){
       });
       // $(this).attr("class","wait").text("Waiting...");
     });
-    FRAME.ansBtn.click(function(e){
+    $("span#answer").click(function(e){
+      console.log($(this).attr("role"));
       socket.emit("SEND_ANSWER",{
         fromUsername: USERNAME,
-        toUsername: $(this).parent().parent().parent().attr("data-username")
+        toUsername: $(this).parent().parent().parent().attr("data-username"),
+        answer: $(this).attr("role")
       });
     })
   });
 
   socket.on(`RESPONSE_REQUEST_${USERNAME}`, function(d){
-    if (d.isReq) FRAME.reqBtn.attr("class","wait").text("Waiting...");
+    console.log(d);
+    if (d.isReq) {
+      $(`a[role="tag"][data-username='${d.toUsername}']`)
+      .find("div[role='req']")
+      .attr("class","wait")
+      .text("Waiting...")
+      .removeAttr("role");
+    }
     else{
       // Nofitication
+      alert(`${d.fromUsername} request to add friend`);
     }
   });
 
   socket.on(`RESPONSE_ANSWER_${USERNAME}`, function(d){
     // Nofitication or decorating something, i don't know
     if (d.isAns){
-
+      if (d.accept){
+        $(`a[role='tag'][data-username='${d.toUsername}']`)
+        .find("div.in4")
+        .append('<div class="friend">&#10004; Friend</div>')
+        .find("div.answer")
+        .remove();
+      }
+      else{
+        // $(`a[role='tag'][data-username='${d.toUsername}']`)
+        // .find("div.in4")
+        // .append('<div class="friend">&#10004; Friend</div>')
+        // .find("div.answer")
+        // .remove();
+      }
     } 
     else{
       
@@ -296,6 +325,7 @@ $(function(){
             listUser: rs,
             groupName: $("input#nameGroup").val()
           });
+          window.location.reload();
         }
       }
     })

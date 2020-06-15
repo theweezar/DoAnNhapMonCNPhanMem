@@ -10,6 +10,6 @@ const FRAME = {
   sendUploadFile: $("#sendFile"),
   discardUploadFile: $("#discardBtn"),
   reqBtn: $('div[role="req"]'),
-  ansBtn: $("span[id='answer']"),
+  ansBtn: $("span#answer"),
   selectList: $("#f-sel-lst")
 };

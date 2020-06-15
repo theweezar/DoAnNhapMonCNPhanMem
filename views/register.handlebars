@@ -1,33 +1,40 @@
-<div class="reg-box">
-  <form action="/register" method="post">
+<div class="wallpp"></div>
+<div class="account-page">
+  <div class="title-1">Register</div>
+  <form action="./register" method="POST">
     <div class="ip-g">
-      <input required="required" placeholder="First name" type="text" name="firstName" id="">
-    </div>
-    <div class="ip-g">
-      <input required="required" placeholder="Last name" type="text" name="lastName" id="">
-    </div>
-    <div>
-      <label for="gender">Gender: </label>
-      <select name="gender" id="gender">
-        <option value="1">Male</option>
-        <option value="0">Female</option>
-      </select>
+      <div class="title-2">First name</div>
+      <input required="required" class="ip" placeholder="First name" id="" name="firstName"/>
     </div>
     <div class="ip-g">
-      <input required="required" placeholder="Username (9-20 characters)" type="text" name="username" id="">
+      <div class="title-2">Last name</div>
+      <input required="required" type="text" class="ip" placeholder="Last name" id="" name="lastName"/>
     </div>
     <div class="ip-g">
-      <input required="required" placeholder="Email" type="text" name="email" id="">
+      <div class="title-2">Username</div>
+      <input required="required" class="ip" placeholder="Username" id="" name="username"/>
     </div>
     <div class="ip-g">
-      <input required="required" placeholder="Password (9-20 characters)" type="password" name="password" id="">
+      <div class="title-2">Email</div>
+      <input required="required" class="ip" placeholder="Email" id="" name="email"/>
     </div>
     <div class="ip-g">
-      <input required="required" placeholder="Type your password again" type="password" name="rePassword" id="">
+      <div class="title-2">Password</div>
+      <input required="required" type="password" class="ip" placeholder="Password (9-20 characters)" id="" name="password"/>
     </div>
-    <div>
-      <input type="submit" value="Register">
+    <div class="ip-g">
+      <div class="title-2">Password</div>
+      <input required="required" type="password" class="ip" placeholder="Type your password again" id="" name="rePassword"/>
     </div>
+    <div class="ip-g center">
+      <button type="submit">Register</button>
+    </div>
+    <table class="option">
+      <tr>
+        {{!-- <td><a href="./forgetpw.htm">*Forget password</a></td> --}}
+        <td><a href="./login">Login</a></td>
+      </tr>
+    </table>
   </form>
 </div>
 
