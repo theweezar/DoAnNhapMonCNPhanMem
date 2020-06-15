@@ -168,6 +168,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
     fullList.sort((t1, t2) => {return t2.recent - t1.recent});
     // console.log(fullList);
     // Get history of the fullList
+    // If the lastest sender is a user
     if (tLTF[0].recent > tLTG[0].recent) {
       historyChat = await(userMsgDetail.getHistory(req.session.username, tLTF[0].username)).map(row => {
         if (row.sender_username == req.session.username) row.isSender = true;
@@ -177,8 +178,10 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
         return row;
       })
     }
+    // else the lastest sender is in a group
     else{
       historyChat = await(groupMsgDetail.getHistory(tLTG[0].id)).map(row => {
+        row.sender_username = await(userTb.getUser({id: row.sender_id}))[0].username;
         if (row.sender_id == req.session.userID) row.isSender = true;
         else row.isSender = false;
         if (row.type == "text") row.text = true;
@@ -214,7 +217,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
         }
       })
     }());
-
+    console.log(historyChat);
     return {
       tLTF: tLTF,
       tLTG: tLTG,
@@ -241,127 +244,129 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
 })
 
 app.get("/app/u/:username",mdW.redirectLogin, (req, res) => {
-  let getData = async (function(){
-    // Set group session empty
-    // req.session.group = [];
-    // Find user's friend in database and display it in client side
-    let friendList = await(friendTb.getFriends(req.session.userID));
-    // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
-    let historyChat = await(userMsgDetail.getHistory(req.session.username, req.params.username)).map(row => {
-      if (row.sender_username == req.session.username) row.isSender = true;
-      else row.isSender = false;
-      if (row.type == "text") row.text = true;
-      else if (row.type == "img") row.img = true;
-      return row;
-    })
-    // Find all the lastest unseen or seen messages of you and your friends then display it on screen
-    let allLastestMsg = friendList.map(friend => {
-      return await(userMsgDetail.getLastestMsg(req.session.username, friend.username));
-    });
-    // If there are some msg that aren't seen yet from your friends, we will make all that msg "Seen"
-    userMsgDetail.seenMsg(req.params.username, req.session.username);
-    return {
-      friendList: friendList,
-      historyChat: historyChat,
-      allLastestMsg: allLastestMsg
-    };
-  });
-  getData()
-  .then(rs => {
-    // console.log(rs.allLastestMsg);
-    rs.friendList.map((friend, i) => {
-      friend.seenMsg = true;
-      if (rs.allLastestMsg[i][0] !== undefined){
-        friend.lastestMsg = rs.allLastestMsg[i][0].type == "text" ? rs.allLastestMsg[i][0].content : "File";
-        friend.lastestSender = `${rs.allLastestMsg[i][0].sender_username}: `;
-        // if seen = false then css will highlight the message
-        if (rs.allLastestMsg[i][0].sender_username !== req.session.username){
-          friend.seenMsg = (rs.allLastestMsg[i][0].seen == 0 ? false:true);
-        }
-      }
-      else{
-        friend.lastestMsg = "Nothing";
-        friend.lastestSender = "";
-      }
-    });
-    res.render("app",{
-      logged: req.session.logged,
-      data: rs,
-      myUsername: req.session.username,
-      myID: req.session.userID
-    })
-  })
-  .catch(err => {throw err;});
+  res.redirect("/app");
+  // let getData = async (function(){
+  //   // Set group session empty
+  //   // req.session.group = [];
+  //   // Find user's friend in database and display it in client side
+  //   let friendList = await(friendTb.getFriends(req.session.userID));
+  //   // Find your message history and the lasted person who texted to you - Sent msg and rcv msg
+  //   let historyChat = await(userMsgDetail.getHistory(req.session.username, req.params.username)).map(row => {
+  //     if (row.sender_username == req.session.username) row.isSender = true;
+  //     else row.isSender = false;
+  //     if (row.type == "text") row.text = true;
+  //     else if (row.type == "img") row.img = true;
+  //     return row;
+  //   })
+  //   // Find all the lastest unseen or seen messages of you and your friends then display it on screen
+  //   let allLastestMsg = friendList.map(friend => {
+  //     return await(userMsgDetail.getLastestMsg(req.session.username, friend.username));
+  //   });
+  //   // If there are some msg that aren't seen yet from your friends, we will make all that msg "Seen"
+  //   userMsgDetail.seenMsg(req.params.username, req.session.username);
+  //   return {
+  //     friendList: friendList,
+  //     historyChat: historyChat,
+  //     allLastestMsg: allLastestMsg
+  //   };
+  // });
+  // getData()
+  // .then(rs => {
+  //   // console.log(rs.allLastestMsg);
+  //   rs.friendList.map((friend, i) => {
+  //     friend.seenMsg = true;
+  //     if (rs.allLastestMsg[i][0] !== undefined){
+  //       friend.lastestMsg = rs.allLastestMsg[i][0].type == "text" ? rs.allLastestMsg[i][0].content : "File";
+  //       friend.lastestSender = `${rs.allLastestMsg[i][0].sender_username}: `;
+  //       // if seen = false then css will highlight the message
+  //       if (rs.allLastestMsg[i][0].sender_username !== req.session.username){
+  //         friend.seenMsg = (rs.allLastestMsg[i][0].seen == 0 ? false:true);
+  //       }
+  //     }
+  //     else{
+  //       friend.lastestMsg = "Nothing";
+  //       friend.lastestSender = "";
+  //     }
+  //   });
+  //   res.render("app",{
+  //     logged: req.session.logged,
+  //     data: rs,
+  //     myUsername: req.session.username,
+  //     myID: req.session.userID
+  //   })
+  // })
+  // .catch(err => {throw err;});
 })
 
 app.get("/app/g/:groupid", mdW.redirectLogin, (req, res) => {
-  let getHistory = async(function(){
-    // Combine friendList and groupList then sort them with .recent DESC
-    let friendList = await(friendTb.getFriends(req.session.userID)).map(f => {
-      f.isUser = true;
-      return f;
-    });
-    let groupList = await(groupTb.getGroup(req.session.userID)).map(g => {
-      g.isGroup = true;
-      return g;
-    });
-    // Sort by .recent of both lists DESC. To show in contact list on front end
-    let fullList = friendList.concat(groupList);
-    fullList.sort((t1, t2) => {return t2.recent - t1.recent});
-    // console.log(fullList);
-    // Get history of the fullList
-    let historyChat = await(groupMsgDetail.getHistory(req.params.groupid)).map(row => {
-      if (row.sender_id == req.session.userID) row.isSender = true;
-      else row.isSender = false;
-      if (row.type == "text") row.text = true;
-      else if (row.type == "img") row.img = true;
-      return row;
-    })
-    let allLastestMsg = fullList.map(e => {
-      if (e.isUser) return await(userMsgDetail.getLastestMsg(req.session.username, e.username));
-      else if (e.isGroup) return await(groupMsgDetail.getLastestMsg(e.id));
-    });
-    // console.log(allLastestMsg);
-    await(function(){
-      fullList.map((e, i) => {
-        e.seenMsg = true;
-        // console.log(e);
-        if (allLastestMsg[i][0] != undefined){
-          e.lastestMsg = allLastestMsg[i][0].type == "text" ? allLastestMsg[i][0].content : "File";
-          if (e.isUser){
-            e.lastestSender = `${allLastestMsg[i][0].sender_username}: `;
-            if (allLastestMsg[i][0].sender_username !== req.session.username){
-              e.seenMsg = (allLastestMsg[i][0].seen == 0 ? false:true);
-            }
-          }
-          if (e.isGroup){
-            e.lastestSender = `${await(userTb.getUser({id: e.userid}))[0].username}: `;
-            if (e.seen === 0) e.seenMsg = false;
-          }
-        }
-        else {
-          e.lastestMsg = "Nothing";
-          e.lastestSender = "";
-        }
-      })
-    }());
-    return{
-      fullList: fullList,
-      historyChat: historyChat,
-      allLastestMsg: allLastestMsg
-    }
-  });
-  getHistory()
-  .then(rs => {
-    // console.log(rs);
-    res.render("app",{
-      logged: req.session.logged,
-      data: rs,
-      myUsername: req.session.username,
-      myID: req.session.userID
-    })
-  })
-  .catch(err => err);
+  res.redirect("/app");
+  // let getHistory = async(function(){
+  //   // Combine friendList and groupList then sort them with .recent DESC
+  //   let friendList = await(friendTb.getFriends(req.session.userID)).map(f => {
+  //     f.isUser = true;
+  //     return f;
+  //   });
+  //   let groupList = await(groupTb.getGroup(req.session.userID)).map(g => {
+  //     g.isGroup = true;
+  //     return g;
+  //   });
+  //   // Sort by .recent of both lists DESC. To show in contact list on front end
+  //   let fullList = friendList.concat(groupList);
+  //   fullList.sort((t1, t2) => {return t2.recent - t1.recent});
+  //   // console.log(fullList);
+  //   // Get history of the fullList
+  //   let historyChat = await(groupMsgDetail.getHistory(req.params.groupid)).map(row => {
+  //     if (row.sender_id == req.session.userID) row.isSender = true;
+  //     else row.isSender = false;
+  //     if (row.type == "text") row.text = true;
+  //     else if (row.type == "img") row.img = true;
+  //     return row;
+  //   })
+  //   let allLastestMsg = fullList.map(e => {
+  //     if (e.isUser) return await(userMsgDetail.getLastestMsg(req.session.username, e.username));
+  //     else if (e.isGroup) return await(groupMsgDetail.getLastestMsg(e.id));
+  //   });
+  //   // console.log(allLastestMsg);
+  //   await(function(){
+  //     fullList.map((e, i) => {
+  //       e.seenMsg = true;
+  //       // console.log(e);
+  //       if (allLastestMsg[i][0] != undefined){
+  //         e.lastestMsg = allLastestMsg[i][0].type == "text" ? allLastestMsg[i][0].content : "File";
+  //         if (e.isUser){
+  //           e.lastestSender = `${allLastestMsg[i][0].sender_username}: `;
+  //           if (allLastestMsg[i][0].sender_username !== req.session.username){
+  //             e.seenMsg = (allLastestMsg[i][0].seen == 0 ? false:true);
+  //           }
+  //         }
+  //         if (e.isGroup){
+  //           e.lastestSender = `${await(userTb.getUser({id: e.userid}))[0].username}: `;
+  //           if (e.seen === 0) e.seenMsg = false;
+  //         }
+  //       }
+  //       else {
+  //         e.lastestMsg = "Nothing";
+  //         e.lastestSender = "";
+  //       }
+  //     })
+  //   }());
+  //   return{
+  //     fullList: fullList,
+  //     historyChat: historyChat,
+  //     allLastestMsg: allLastestMsg
+  //   }
+  // });
+  // getHistory()
+  // .then(rs => {
+  //   // console.log(rs);
+  //   res.render("app",{
+  //     logged: req.session.logged,
+  //     data: rs,
+  //     myUsername: req.session.username,
+  //     myID: req.session.userID
+  //   })
+  // })
+  // .catch(err => err);
 })
 
 // Return a friend list to create a new group
@@ -666,6 +671,7 @@ io.on("connection",socket => {
         type: "text",
         isGroup: true
       }
+      console.log(sendData);
       io.emit(`RESPONSE_TO_${d.senderUsername}`, sendData);
       rs.listUsername.forEach(username => {
         if (username != socket.username) io.emit(`MESSAGE_TO_${username}`, sendData);
@@ -694,6 +700,67 @@ io.on("connection",socket => {
       });
     })
     .catch(err => err);
+  });
+
+  // 5. User send a file to a group
+  socket.on("FILE_USER_TO_GROUP", function(d){
+    // base64file is the data that sent from client-side
+    let base64file = d.base64file.split(';base64,').pop();
+    let isImg = ["jpg","png","jpeg"].includes(d.fileExt);
+    let link = isImg ? "img":"others";
+    // console.log(d);
+    // genName is a Promise that generate random name for that base64file
+    let process = async(function(){
+      let user = await(userTb.getUser({id: d.senderId}));
+      let listUsername = await(groupMembersDetail.get({groupId: d.groupId})).map(e => {
+        let u = await(userTb.getUser({id: e.userid}));
+        return u[0].username;
+      })
+      return{
+        sendUser: user,
+        listUsername: listUsername,
+        newName: new Array(10).fill().map(c => c = String.fromCharCode(Math.floor(Math.random()*(122+1-97)+97)))
+      }
+    })
+    process().then(rs => {
+      let newName = rs.newName.toString().replace(/,/g,"");
+      // Create that base64file with the name that created above, then save it in folder "files"
+      fs.writeFile(
+        path.join(__dirname,"files",link,`${newName}.${d.fileExt}`), 
+        base64file, 
+        {encoding: 'base64'}, 
+        function(err) {
+          if (err) console.log(err);
+          else{
+            // We just need to save the link of that file which created above
+            groupMsgDetail.add({
+              groupId: d.groupId,
+              senderId: d.senderId,
+              content: `${link}/${newName}.${d.fileExt}`,
+              type:"img"
+            })
+            let sendData = {
+              senderUsername: rs.sendUser[0].username,
+              senderId: d.senderId,
+              isGroup: true,
+              groupId: d.groupId,
+              msg: `${link}/${newName}.${d.fileExt}`,
+              type: "img"
+            }
+            console.log(sendData);
+            
+            // Response the image to the sender
+            io.emit(`RESPONSE_TO_${d.senderUsername}`, sendData);
+            console.log(rs.listUsername);
+            rs.listUsername.forEach(username => {
+              if (username != socket.username){
+                // Send the image to the receiver
+                io.emit(`MESSAGE_TO_${username}`, sendData);
+              }
+            })
+          }
+      });
+    });
   })
   socket.on("disconnect",() => console.log("Disconnect"))
 });

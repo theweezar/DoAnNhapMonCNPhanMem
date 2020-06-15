@@ -1,5 +1,6 @@
 function loadMsg(isSender,d = {senderUsername, rcvUsername, msg, type, isGroup, groupId}){
   let msgHTML = "";
+  console.log(d);
   if (d.type == "text") msgHTML = `<p>${d.msg}</p>`;
   else if (d.type == "img") msgHTML = `<img src="../../${d.msg}" alt="" srcset="">`;
   if (isSender){
@@ -12,7 +13,7 @@ function loadMsg(isSender,d = {senderUsername, rcvUsername, msg, type, isGroup, 
           </div>
         </div>
         <div class="sent-ava">
-          <img src="../../icon/PngItem_5167304.png" alt="" srcset="">
+          ${d.senderUsername}
         </div>
       </div>`
     );
@@ -21,7 +22,7 @@ function loadMsg(isSender,d = {senderUsername, rcvUsername, msg, type, isGroup, 
     FRAME.msgBox.append(
       `<div class="rcv-f">
         <div class="rcv-ava">
-          <img src="../../icon/PngItem_5167304.png" alt="" srcset="">
+          ${d.senderUsername}
         </div>
         <div class="rcv-ct">
           <div class="rcv-ct-inb">
@@ -48,7 +49,7 @@ function loadLastestMsgInFriendTag(d = {senderUsername, rcvUsername, msg, type, 
     there = $(`a[role='link'][data-username='${d.senderUsername}']`);
     here = $(`a[role='link'][data-username='${location.pathname.split("/")[3]}']`);
   }
-  if (d.senderUsername === location.pathname.split("/")[3] || d.senderUsername === USERNAME){
+  if (d.senderUsername === location.pathname.split("/")[3] || d.senderUsername === USERNAME || d.groupId === location.pathname.split("/")[3]){
     here
     .find("#lst-msg")
     .text(`${d.senderUsername}: ${d.type == "text" ? d.msg:"File"}`);
@@ -80,12 +81,15 @@ function loadHistoryChat(history = []){
   });
 }
 
-function reLoadContactList(topUsername){
-  let top = $(`li a[data-username='${topUsername}']`).parent();
-  top.remove();
-  let bottom = $("#contact-list ul li");
-  FRAME.contactList.append(top);
-  FRAME.contactList.append(bottom);
+function reLoadContactList(d={topUsername, topGroupId}){
+  let top = undefined;
+  if (d.topUsername != undefined && d.topGroupId == undefined) top = $(`li a[data-username='${d.topUsername}']`).parent();
+  else if (d.topGroupId != undefined) top = $(`li a[data-group-id='${d.topGroupId}']`).parent();
+  // top.remove();
+  // let bottom = $("#contact-list ul li");
+  FRAME.contactList.prepend(top);
+  // FRAME.contactList.append(bottom);
+  
 }
 
 function loadFoundPeople(pList = []){

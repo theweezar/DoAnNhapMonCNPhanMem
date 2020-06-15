@@ -1,3 +1,5 @@
+// const async = require("asyncawait/async");
+
 $(function(){
   const socket = io();
   // console.log(socket);
@@ -8,6 +10,8 @@ $(function(){
     username:USERNAME,
     userID: ID
   });
+  $($("a[role='link']")[0]).parent().addClass("selected");
+  FRAME.msgBox.get(0).scrollTo(0, FRAME.msgBox.get(0).scrollHeight)
   // ==================================================================================
   // WHEN YOU SEND A MSG TO YOUR FRIEND
   FRAME.textArea.keyup(function(e){ // Type enter and the msg will be sent to server
@@ -49,7 +53,9 @@ $(function(){
     loadMsg(true,{
       senderUsername: USERNAME,
       msg: d.msg,
-      type: d.type
+      type: d.type,
+      isGroup: d.isGroup,
+      groupId: d.groupId
     });
     loadLastestMsgInFriendTag({
       senderUsername: USERNAME,
@@ -60,7 +66,12 @@ $(function(){
       groupId: d.groupId
     });
     // Bring your friends to the top whenever you text to them
-    reLoadContactList(d.rcvUsername);
+    reLoadContactList({
+      topUsername: d.rcvUsername,
+      topGroupId: d.groupId
+    });
+    // Scroll boxchat down to bottom
+    FRAME.msgBox.get(0).scrollTo(0, FRAME.msgBox.get(0).scrollHeight);
   });
   // ===================================================================================
   // RECEIVE FROM SOMEONE
@@ -74,6 +85,8 @@ $(function(){
         msg: d.msg,
         type: d.type
       });
+      // Scroll boxchat down to bottom
+      FRAME.msgBox.get(0).scrollTo(0, FRAME.msgBox.get(0).scrollHeight)
     }
     // if not, we just need to load the lastestMsg in friend tag
     loadLastestMsgInFriendTag({
@@ -85,7 +98,10 @@ $(function(){
       groupId: d.groupId
     });
     // Bring your friends to the top whenever they text to you
-    reLoadContactList(d.senderUsername);
+    reLoadContactList({
+      topUsername: d.senderUsername,
+      topGroupId: d.groupId
+    });
   });
   // ====================================================================================
   // Connect to someone throught a chat box
@@ -93,7 +109,8 @@ $(function(){
     e.preventDefault();
     var url = $(this).attr("href");
     history.pushState("","",url);
-    e.preventDefault();
+    // e.preventDefault();
+    $("li.selected").removeClass("selected");
     if ($(this).attr("rcv-type") === "user"){
       socket.emit("USER_CONNECT_USER",{
         senderUsername:USERNAME,
@@ -104,10 +121,9 @@ $(function(){
       $(`a[role='link'][data-username='${url.split("/")[3]}']`)
       .find("#lst-msg")
       .removeAttr("style");
-      // socket.emit("MAKE_MSG_SEEN",{
-      //   senderUsername:USERNAME,
-      //   rcvUsername:url.split("/")[3]
-      // });
+      // Highlight where we choose
+      $(`a[role='link'][data-username='${url.split("/")[3]}']`)
+      .parent().addClass("selected");
     }
     else if($(this).attr("rcv-type") === "group"){
       console.log("group");
@@ -119,10 +135,17 @@ $(function(){
       $(`a[role='link'][data-group-id='${url.split("/")[3]}']`)
       .find("#lst-msg")
       .removeAttr("style");
+      $(`a[role='link'][data-group-id='${url.split("/")[3]}']`)
+      .parent().addClass("selected");
     }
     socket.on(`HISTORY_USER_USER_${USERNAME}`,function(d){
       console.log(d);
       loadHistoryChat(d.historyChat);
+      // Scroll boxchat down to bottom
+      // FRAME.msgBox.get(0).scrollTo(0, FRAME.msgBox.get(0).scrollHeight);
+      setTimeout(() => {
+        FRAME.msgBox.get(0).scrollTo(0, FRAME.msgBox.get(0).scrollHeight)
+      }, 150);
       socket.removeListener(`HISTORY_USER_USER_${USERNAME}`);
     });
   })
@@ -152,12 +175,25 @@ $(function(){
         FRAME.sendUploadFile.click(function(e){
           FRAME.previewUploadFrame.css({"display":"none"});
           FRAME.previewUploadFile.attr("src","");
-          socket.emit("FILE_USER_TO_USER",{
-            senderUsername: USERNAME,
-            rcvUsername: window.location.pathname.split("/")[3],
-            base64file: base64file,
-            fileExt: fileExt
-          });
+
+          if (window.location.pathname.split("/")[2] == "u"){
+            socket.emit("FILE_USER_TO_USER",{
+              senderUsername: USERNAME,
+              rcvUsername: window.location.pathname.split("/")[3],
+              base64file: base64file,
+              fileExt: fileExt
+            });
+          }
+          else if (window.location.pathname.split("/")[2] == "g"){
+            socket.emit("FILE_USER_TO_GROUP",{
+              senderUsername: USERNAME,
+              senderId: ID,
+              groupId: window.location.pathname.split("/")[3],
+              base64file: base64file,
+              fileExt: fileExt
+            });
+          }
+          
         })
       }
     }

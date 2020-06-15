@@ -148,7 +148,7 @@ img[alt="ava"] {
 /* Handle */
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(136, 136, 136, 0.103);
+    background: rgb(136, 136, 136);
 }
 
 /* Handle on hover */
