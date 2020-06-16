@@ -172,8 +172,7 @@ $(function(){
         FRAME.discardUploadFile.click(function(e){
           FRAME.previewUploadFrame.css({"display":"none"});
           FRAME.previewUploadFile.attr("src","");
-          reader = undefined;
-        });
+          reader = undefined;       });
         FRAME.sendUploadFile.click(function(e){
           FRAME.previewUploadFrame.css({"display":"none"});
           FRAME.previewUploadFile.attr("src","");
@@ -264,11 +263,11 @@ $(function(){
         .remove();
       }
       else{
-        // $(`a[role='tag'][data-username='${d.toUsername}']`)
-        // .find("div.in4")
-        // .append('<div class="friend">&#10004; Friend</div>')
-        // .find("div.answer")
-        // .remove();
+        $(`a[role='tag'][data-username='${d.toUsername}']`)
+        .find("div.in4")
+        .append('<div class="friend">&#10004; Friend</div>')
+        .find("div.answer")
+        .remove();
       }
     } 
     else{
@@ -330,6 +329,9 @@ $(function(){
         }
       }
     })
+  });
+  socket.on(`RESPONSE_GROUP_${USERNAME}`, function(){
+    window.location.reload();
   });
   $("#inpfFriend").on("keyup", function(){
     if ($(this).val().trim() !== ""){

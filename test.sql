@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2020 at 05:19 PM
+-- Generation Time: Jun 16, 2020 at 04:12 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -41,13 +41,19 @@ CREATE TABLE `friends` (
 --
 
 INSERT INTO `friends` (`id`, `userId_1`, `userId_2`, `accept`, `recent`) VALUES
-(1, 1, 3, 1, '2020-06-12 12:33:44'),
-(2, 4, 1, 1, '2020-06-05 04:17:00'),
-(3, 1, 5, 1, '2020-06-06 02:40:59'),
+(1, 1, 3, 1, '2020-06-15 11:17:25'),
+(3, 1, 5, 1, '2020-06-15 11:49:06'),
 (4, 3, 5, 1, '2020-06-12 09:49:32'),
-(5, 1, 8, 0, '2020-04-23 12:28:27'),
+(5, 1, 8, 1, '2020-06-16 00:07:02'),
 (6, 5, 8, 0, '2020-04-23 13:46:00'),
-(7, 3, 8, 0, '2020-04-23 13:46:23');
+(7, 3, 8, 0, '2020-04-23 13:46:23'),
+(8, 1, 7, 0, '2020-06-15 16:10:02'),
+(12, 1, 9, 0, '2020-06-15 16:29:15'),
+(13, 11, 1, 1, '2020-06-15 17:21:24'),
+(14, 11, 7, 0, '2020-06-15 17:21:07'),
+(15, 11, 8, 0, '2020-06-15 17:21:09'),
+(16, 10, 1, 1, '2020-06-16 01:54:03'),
+(17, 10, 3, 1, '2020-06-16 01:40:18');
 
 -- --------------------------------------------------------
 
@@ -67,8 +73,10 @@ CREATE TABLE `groups` (
 --
 
 INSERT INTO `groups` (`id`, `creatorid`, `name`, `recent`) VALUES
-(6, 1, 'truc_dong,dai_ga_vl', '2020-06-13 04:22:37'),
-(7, 3, 'truc_dong,admin', '2020-06-13 03:24:17');
+(6, 1, 'truc_dong,dai_ga_vl', '2020-06-15 17:13:12'),
+(7, 3, 'truc_dong,admin', '2020-06-15 13:39:41'),
+(8, 1, 'group test', '2020-06-15 17:17:09'),
+(9, 1, 'Groupt2', '2020-06-16 01:16:30');
 
 -- --------------------------------------------------------
 
@@ -89,11 +97,18 @@ CREATE TABLE `groups_members_detail` (
 
 INSERT INTO `groups_members_detail` (`id`, `userid`, `isAdmin`, `seen`) VALUES
 (6, 1, 1, 1),
-(6, 5, 0, 0),
+(6, 5, 0, 1),
 (6, 3, 0, 1),
 (7, 3, 1, 1),
-(7, 5, 0, 0),
-(7, 1, 0, 1);
+(7, 5, 0, 1),
+(7, 1, 0, 1),
+(8, 1, 1, 1),
+(8, 8, 0, 0),
+(8, 5, 0, 0),
+(8, 3, 0, 0),
+(9, 1, 1, 1),
+(9, 10, 0, 1),
+(9, 5, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -131,7 +146,54 @@ INSERT INTO `groups_messages_detail` (`id`, `groupId`, `sender_id`, `content`, `
 (14, 6, 1, 'test', 'text', '2020-06-13 04:21:00'),
 (15, 6, 3, 'ngon', 'text', '2020-06-13 04:21:11'),
 (16, 6, 1, 's', 'text', '2020-06-13 04:22:30'),
-(17, 6, 3, 's', 'text', '2020-06-13 04:22:37');
+(17, 6, 3, 's', 'text', '2020-06-13 04:22:37'),
+(18, 6, 3, 'hello', 'text', '2020-06-15 09:11:23'),
+(19, 6, 1, 'test test', 'text', '2020-06-15 09:26:28'),
+(20, 6, 1, 'test404', 'text', '2020-06-15 10:28:19'),
+(21, 6, 5, 'all', 'text', '2020-06-15 10:29:26'),
+(22, 6, 5, 'as', 'text', '2020-06-15 10:29:30'),
+(23, 6, 5, 'test', 'text', '2020-06-15 10:29:39'),
+(24, 6, 5, 'test from trucdong', 'text', '2020-06-15 10:29:48'),
+(25, 6, 1, 'ok', 'text', '2020-06-15 10:30:35'),
+(26, 6, 1, 'img/htkeulcbld.png', 'img', '2020-06-15 12:19:15'),
+(27, 7, 1, 'img/bvezhctwbu.jpg', 'img', '2020-06-15 12:23:03'),
+(28, 6, 1, 'p', 'text', '2020-06-15 12:24:38'),
+(29, 7, 1, 'img/vdxycvztre.jpg', 'img', '2020-06-15 12:25:42'),
+(30, 6, 1, 'img/doqtqsnvme.jpg', 'img', '2020-06-15 12:26:26'),
+(31, 6, 1, 'img/eepditcawj.jpg', 'img', '2020-06-15 12:30:43'),
+(32, 6, 1, 'img/ifjyblnykg.jpg', 'img', '2020-06-15 12:32:11'),
+(33, 6, 1, 'asd', 'text', '2020-06-15 12:35:56'),
+(34, 6, 1, 'a', 'text', '2020-06-15 12:47:24'),
+(35, 6, 1, 's', 'text', '2020-06-15 12:47:46'),
+(36, 6, 1, 'k', 'text', '2020-06-15 12:47:50'),
+(37, 7, 1, 'w', 'text', '2020-06-15 12:56:10'),
+(38, 7, 1, 'ok', 'text', '2020-06-15 12:56:16'),
+(39, 7, 3, 'img/eloybkdbey.jpg', 'img', '2020-06-15 13:27:11'),
+(40, 7, 3, 'img/krmcpbiclj.jpg', 'img', '2020-06-15 13:27:11'),
+(41, 7, 3, 'img/itwwowuzry.jpg', 'img', '2020-06-15 13:27:27'),
+(42, 7, 3, 'img/dkocxvhcxz.jpg', 'img', '2020-06-15 13:27:27'),
+(43, 7, 3, 'img/rayqjrpduw.jpg', 'img', '2020-06-15 13:27:27'),
+(44, 7, 1, 'img/vhpkqysjwa.jpg', 'img', '2020-06-15 13:29:18'),
+(45, 6, 1, 'img/wezjtydghz.jpg', 'img', '2020-06-15 13:31:16'),
+(46, 7, 1, 's', 'text', '2020-06-15 13:38:08'),
+(47, 7, 1, 'sw', 'text', '2020-06-15 13:38:11'),
+(48, 7, 1, 'w', 'text', '2020-06-15 13:38:13'),
+(49, 7, 1, 'q', 'text', '2020-06-15 13:38:19'),
+(50, 7, 1, 'q', 'text', '2020-06-15 13:38:36'),
+(51, 7, 1, 'q', 'text', '2020-06-15 13:38:38'),
+(52, 7, 1, 'w', 'text', '2020-06-15 13:39:41'),
+(53, 6, 1, 'w', 'text', '2020-06-15 13:41:10'),
+(54, 6, 1, 'q', 'text', '2020-06-15 13:41:14'),
+(55, 6, 3, 'hello', 'text', '2020-06-15 14:20:17'),
+(56, 6, 3, 'test', 'text', '2020-06-15 14:20:24'),
+(57, 6, 3, 'img/xdljuclitl.jpg', 'img', '2020-06-15 14:20:33'),
+(58, 6, 3, 'asd', 'text', '2020-06-15 14:22:21'),
+(59, 6, 1, 'others/rtvvlyryux.docx:ANhdh.docx', 'file', '2020-06-15 17:10:05'),
+(60, 6, 1, 'img/mppckrfovr.jpg', 'img', '2020-06-15 17:11:25'),
+(61, 7, 1, 'img/tydkpbhmpd.jpg', 'img', '2020-06-15 17:11:46'),
+(62, 7, 1, 'others/yaqufshtgn.docx:Nhom15_ElearningWebsite.docx', 'file', '2020-06-15 17:11:46'),
+(63, 6, 1, 's', 'text', '2020-06-15 17:13:12'),
+(64, 9, 1, 'others/htepzemrbc.docx:Bieu-Mau-do-an-mon-hoc.docx', 'file', '2020-06-16 01:17:00');
 
 -- --------------------------------------------------------
 
@@ -144,24 +206,23 @@ CREATE TABLE `users` (
   `username` varchar(20) NOT NULL,
   `password` text NOT NULL,
   `email` varchar(100) NOT NULL,
-  `fullname` varchar(100) NOT NULL,
-  `gender` tinyint(1) NOT NULL
+  `fullname` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `email`, `fullname`, `gender`) VALUES
-(1, 'admin', 'admin', 'minhduc@gmail.com', 'Minh Duc', 1),
-(3, 'dai_ga_vl', 'Daigavl3008', 'Dai@gmail.com', 'Phan Dai', 1),
-(4, 'ngoctrinhsexy', 'Ngoctrinhsexy90', 'ngoctrinh@gmail.com', 'Ngoc Trinh', 0),
-(5, 'truc_dong', 'Trucdong99', 'trucdong@gmail.com', 'Truc Dong', 1),
-(6, 'toanhkhoa', 'Khoato2712', 'khoato@gmail.com', 'To Anh Khoa', 1),
-(7, 'tranminhduc', 'Minhduc12345', 'ductran@yahoo.com', 'Tran Minh Duc', 1),
-(8, 'nguyenminhduc', 'Minhduc12345', 'ducnguyen@gmail.com', 'Nguyen Minh Duc', 1),
-(9, 'trannhatduc', 'Nhatduc12345', 'nhatduc@yahoo.com', 'Tran Nhat Duc', 1),
-(10, 'trungtinh', 'Trungtinh123', 'trungtinh@gmail.com', 'nguyen trung tinh', 1);
+INSERT INTO `users` (`id`, `username`, `password`, `email`, `fullname`) VALUES
+(1, 'admin', 'admin', 'minhduc@gmail.com', 'Minh Duc'),
+(3, 'dai_ga_vl', 'Daigavl3008', 'Dai@gmail.com', 'Phan Dai'),
+(5, 'truc_dong', 'Trucdong99', 'trucdong@gmail.com', 'Truc Dong'),
+(6, 'toanhkhoa', 'Khoato2712', 'khoato@gmail.com', 'To Anh Khoa'),
+(7, 'tranminhduc', 'Minhduc12345', 'ductran@yahoo.com', 'Tran Minh Duc'),
+(8, 'nguyenminhduc', 'Minhduc12345', 'ducnguyen@gmail.com', 'Nguyen Minh Duc'),
+(9, 'trannhatduc', 'Nhatduc12345', 'nhatduc@yahoo.com', 'Tran Nhat Duc'),
+(10, 'trungtinh', 'Trungtinh123', 'trungtinh@gmail.com', 'nguyen trung tinh'),
+(11, 'kimthoa', 'Kimthoa98', 'kimthoa@gmail.com', 'Kim Thoa');
 
 -- --------------------------------------------------------
 
@@ -197,11 +258,8 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (12, 'admin', 'u', 'dai_ga_vl', 'text', 1, '2020-04-18 02:32:33'),
 (13, 'admin', 'asd', 'dai_ga_vl', 'text', 1, '2020-04-18 02:33:30'),
 (14, 'admin', 'a', 'truc_dong', 'text', 1, '2020-04-18 02:36:10'),
-(15, 'admin', 'hello', 'ngoctrinhsexy', 'text', 1, '2020-04-18 02:48:25'),
 (16, 'admin', 'w', 'truc_dong', 'text', 1, '2020-04-18 02:51:09'),
 (17, 'admin', 'we', 'dai_ga_vl', 'text', 1, '2020-04-18 02:52:55'),
-(18, 'admin', 'hi', 'ngoctrinhsexy', 'text', 1, '2020-04-18 02:55:35'),
-(19, 'admin', 'shi', 'ngoctrinhsexy', 'text', 1, '2020-04-18 02:56:51'),
 (20, 'admin', 'we', 'truc_dong', 'text', 1, '2020-04-18 02:56:54'),
 (21, 'admin', 'wtff', 'dai_ga_vl', 'text', 1, '2020-04-18 02:56:59'),
 (22, 'dai_ga_vl', 'fuck you', 'admin', 'text', 1, '2020-04-18 03:08:41'),
@@ -232,8 +290,6 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (47, 'dai_ga_vl', 'Dm', 'truc_dong', 'text', 1, '2020-04-18 04:09:04'),
 (48, 'dai_ga_vl', 'Cc', 'admin', 'text', 1, '2020-04-18 04:09:55'),
 (49, 'admin', 'dm', 'dai_ga_vl', 'text', 1, '2020-04-19 12:30:54'),
-(50, 'admin', 'alo', 'ngoctrinhsexy', 'text', 1, '2020-04-20 05:53:55'),
-(51, 'admin', 'oc', 'ngoctrinhsexy', 'text', 1, '2020-04-20 05:56:31'),
 (52, 'admin', 'we', 'truc_dong', 'text', 1, '2020-04-20 05:56:38'),
 (53, 'truc_dong', 'hello holle', 'admin', 'text', 1, '2020-04-20 06:42:18'),
 (54, 'truc_dong', 'bonjour', 'admin', 'text', 1, '2020-04-20 06:43:14'),
@@ -245,15 +301,11 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (60, 'admin', 'Ghe', 'truc_dong', 'text', 1, '2020-04-22 10:00:04'),
 (61, 'admin', 'ttttt', 'dai_ga_vl', 'text', 1, '2020-04-22 10:00:51'),
 (62, 'admin', 'dep', 'truc_dong', 'text', 1, '2020-04-22 10:01:35'),
-(63, 'admin', 'uhgt', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:03:02'),
 (64, 'admin', 's', 'truc_dong', 'text', 1, '2020-04-22 10:05:29'),
-(65, 'admin', 'r', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:08:28'),
-(66, 'admin', 'w', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:11:35'),
 (67, 'admin', 't', 'dai_ga_vl', 'text', 1, '2020-04-22 10:14:50'),
 (68, 'admin', '5', 'truc_dong', 'text', 1, '2020-04-22 10:16:37'),
 (69, 'admin', 's', 'truc_dong', 'text', 1, '2020-04-22 10:17:20'),
 (70, 'admin', 'j', 'truc_dong', 'text', 1, '2020-04-22 10:20:30'),
-(71, 'admin', 'hi', 'ngoctrinhsexy', 'text', 1, '2020-04-22 10:23:35'),
 (72, 'admin', 't', 'truc_dong', 'text', 1, '2020-04-22 10:23:44'),
 (73, 'admin', 'y', 'truc_dong', 'text', 1, '2020-04-22 10:23:50'),
 (74, 'admin', 't', 'dai_ga_vl', 'text', 1, '2020-04-29 02:53:43'),
@@ -273,15 +325,49 @@ INSERT INTO `user_messages_detail` (`id`, `sender_username`, `content`, `rcv_use
 (88, 'admin', 'alo', 'dai_ga_vl', 'text', 1, '2020-06-05 04:05:15'),
 (89, 'admin', 'wdw', 'truc_dong', 'text', 1, '2020-06-05 04:06:17'),
 (90, 'admin', 'w', 'truc_dong', 'text', 1, '2020-06-05 04:06:23'),
-(91, 'admin', 'test1', 'ngoctrinhsexy', 'text', 1, '2020-06-05 04:10:29'),
-(92, 'admin', 'test2', 'ngoctrinhsexy', 'text', 1, '2020-06-05 04:17:00'),
 (93, 'admin', 'test4', 'dai_ga_vl', 'text', 1, '2020-06-05 04:17:11'),
 (94, 'admin', 'pkiuhj', 'truc_dong', 'text', 1, '2020-06-06 01:50:31'),
-(95, 'admin', 'img/qczeeohkqn.png', 'ngoctrinhsexy', 'img', 1, '2020-06-06 01:59:08'),
-(96, 'admin', 'img/aodhxkmjbv.jpg', 'ngoctrinhsexy', 'img', 1, '2020-06-06 02:28:03'),
 (97, 'admin', 's', 'truc_dong', 'text', 1, '2020-06-06 02:40:59'),
-(98, 'dai_ga_vl', 'what', 'truc_dong', 'text', 0, '2020-06-12 09:49:32'),
-(99, 'admin', 'lo', 'dai_ga_vl', 'text', 1, '2020-06-12 12:33:44');
+(98, 'dai_ga_vl', 'what', 'truc_dong', 'text', 1, '2020-06-12 09:49:32'),
+(99, 'admin', 'lo', 'dai_ga_vl', 'text', 1, '2020-06-12 12:33:44'),
+(100, 'dai_ga_vl', 'alo', 'admin', 'text', 1, '2020-06-15 09:11:51'),
+(101, 'dai_ga_vl', 'ok', 'admin', 'text', 1, '2020-06-15 09:14:16'),
+(102, 'admin', 'test100', 'truc_dong', 'text', 1, '2020-06-15 09:24:46'),
+(103, 'admin', 'test104', 'dai_ga_vl', 'text', 1, '2020-06-15 10:24:16'),
+(104, 'admin', 'test105', 'dai_ga_vl', 'text', 1, '2020-06-15 10:38:19'),
+(105, 'admin', 's', 'dai_ga_vl', 'text', 1, '2020-06-15 10:49:40'),
+(106, 'admin', 'again', 'dai_ga_vl', 'text', 1, '2020-06-15 10:54:31'),
+(107, 'admin', 'q', 'dai_ga_vl', 'text', 1, '2020-06-15 10:55:33'),
+(108, 'admin', 'k', 'dai_ga_vl', 'text', 1, '2020-06-15 10:57:03'),
+(109, 'admin', 'w', 'truc_dong', 'text', 0, '2020-06-15 10:58:31'),
+(110, 'admin', 'oke', 'dai_ga_vl', 'text', 1, '2020-06-15 11:17:25'),
+(111, 'admin', 'img/jkadtbelag.png', 'dai_ga_vl', 'img', 1, '2020-06-15 11:36:43'),
+(112, 'admin', 'img/umgwikvkeq.jpg', 'truc_dong', 'img', 0, '2020-06-15 11:48:27'),
+(113, 'admin', 'w', 'truc_dong', 'text', 0, '2020-06-15 11:49:06'),
+(114, 'admin', 'img/ufdiibmwkm.png', 'dai_ga_vl', 'img', 1, '2020-06-15 11:51:44'),
+(115, 'admin', 'img/kfkktsodvl.png', 'truc_dong', 'img', 0, '2020-06-15 11:51:52'),
+(116, 'admin', 'img/unmryagyvf.jpg', 'truc_dong', 'img', 0, '2020-06-15 11:51:53'),
+(117, 'dai_ga_vl', 'img/oozoykscos.jpg', 'admin', 'img', 1, '2020-06-15 13:26:56'),
+(118, 'admin', 'img/nhjcnocykv.jpg', 'nguyenminhduc', 'img', 0, '2020-06-15 16:34:44'),
+(119, 'admin', 'others/gjcwjoxxmt.docx:ANhdh.docx', 'nguyenminhduc', 'file', 0, '2020-06-15 16:52:00'),
+(120, 'admin', 'k', 'nguyenminhduc', 'text', 0, '2020-06-15 17:04:00'),
+(122, 'admin', 'others/hasvjmbbxd.docx:BaiTapLinux.docx', 'nguyenminhduc', 'file', 0, '2020-06-16 00:01:53'),
+(123, 'admin', 'others/xzkntfedeo.docx:Huong Dan Doc Xuat Du Lieu Tu SQL.docx', 'kimthoa', 'file', 0, '2020-06-16 00:06:03'),
+(124, 'admin', 'others/bpobmfxqwu.docx:Huong Dan Ket Noi Cac Form.docx', 'kimthoa', 'file', 0, '2020-06-16 00:06:03'),
+(125, 'admin', 'others/umkmdfhiub.docx:ANhdh.docx', 'kimthoa', 'file', 0, '2020-06-16 00:06:51'),
+(126, 'admin', 'others/dchljkyogo.docx:BaiTapLinux.docx', 'kimthoa', 'file', 0, '2020-06-16 00:06:51'),
+(127, 'admin', 's', 'nguyenminhduc', 'text', 0, '2020-06-16 00:07:02'),
+(128, 'trungtinh', 'chào bạn đức', 'admin', 'text', 1, '2020-06-16 01:15:32'),
+(129, 'admin', 'oke bạn', 'trungtinh', 'text', 1, '2020-06-16 01:15:38'),
+(130, 'trungtinh', 'img/tesdxpmhcb.jpg', 'admin', 'img', 1, '2020-06-16 01:15:51'),
+(131, 'admin', 'img/ccgvrvhoxl.jpg', 'trungtinh', 'img', 1, '2020-06-16 01:15:55'),
+(132, 'trungtinh', 'img/hgmdshetnn.jpg', 'admin', 'img', 1, '2020-06-16 01:30:09'),
+(133, 'dai_ga_vl', '.', 'trungtinh', 'text', 1, '2020-06-16 01:40:18'),
+(134, 'admin', 'others/kexafgiadh.docx:Nhom19_BaoCao.docx', 'trungtinh', 'file', 1, '2020-06-16 01:41:37'),
+(135, 'admin', 'others/mxjkncjggr.docx:Nhom19_BaoCao.docx', 'trungtinh', 'file', 1, '2020-06-16 01:42:56'),
+(136, 'admin', 'others/kofdrktzly.docx:Nhom19_BaoCao.docx', 'trungtinh', 'file', 1, '2020-06-16 01:44:18'),
+(137, 'trungtinh', 'others/njnsnkhybc.docx:Nhom19_tuan1.docx', 'admin', 'file', 1, '2020-06-16 01:52:36'),
+(138, 'trungtinh', 'aaa', 'admin', 'text', 0, '2020-06-16 01:54:03');
 
 --
 -- Indexes for dumped tables
@@ -341,31 +427,31 @@ ALTER TABLE `user_messages_detail`
 -- AUTO_INCREMENT for table `friends`
 --
 ALTER TABLE `friends`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `groups_messages_detail`
 --
 ALTER TABLE `groups_messages_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `user_messages_detail`
 --
 ALTER TABLE `user_messages_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
 
 --
 -- Constraints for dumped tables

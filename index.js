@@ -83,7 +83,10 @@ app.post("/login",(req,res) => {
   // Get data from database
   userTb.getUser({username:username})
   .then(user => {
-    if (user[0].password === password){
+    if (user.length == 0){
+      res.render("login",{err:true});
+    }
+    else if (user[0].password === password){
       req.session.userID = user[0].id;
       req.session.username = username;
       req.session.logged = true;
@@ -122,9 +125,9 @@ app.post("/register",(req,res) => {
     });
     checkExist()
     .then(rs => {
-      if (rs.checkUsername.length !== 0) res.render("/register",{usernameErr: true});
-      else if (rs.checkEmail.length !== 0) res.render("/register",{emailErr: true});
-      else if (password !== rePassword) res.render("/register",{passwordErr: true});
+      if (rs.checkUsername.length !== 0) res.render("register",{usernameErr: true});
+      else if (rs.checkEmail.length !== 0) res.render("register",{emailErr: true});
+      else if (password !== rePassword) res.render("register",{passwordErr: true});
       else{
         let fullname = `${firstName} ${lastName}`;
         userTb.addUser(username, password, email, fullname);
@@ -133,7 +136,10 @@ app.post("/register",(req,res) => {
     })
     .catch(err => err);
   }
-  else res.redirect("/register");
+  else{
+    res.render("register",{sthErr: true});
+    // res.redirect("/register");
+  }
 })
 
 app.get("/logout", (req, res) => {
@@ -181,7 +187,7 @@ app.get("/app",mdW.redirectLogin,(req,res) => {
           return row;
         });
       }
-      if (tLTF[0].recent > tLTG[0].recent ) {
+      else if (tLTF[0].recent > tLTG[0].recent ) {
         historyChat = await(userMsgDetail.getHistory(req.session.username, tLTF[0].username)).map(row => {
           if (row.sender_username == req.session.username) row.isSender = true;
           else row.isSender = false;
@@ -703,7 +709,7 @@ io.on("connection",socket => {
     });
     creatingGroup()
     .then(() => {
-      console.log("done");
+      io.emit(`RESPONSE_GROUP_${socket.username}`);
     })
     .catch(err => err);
   });

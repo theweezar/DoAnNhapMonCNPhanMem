@@ -278,7 +278,7 @@ body{
 
 .app-container .chat-container .chat-box .box-2{
   display: grid;
-  grid-template-columns: 6% 6% 78% 10%;
+  grid-template-columns: 6% 84% 10%;
 }
 
 .app-container .chat-container .chat-box .box-2 .f-icon{
