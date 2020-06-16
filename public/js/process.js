@@ -172,6 +172,7 @@ $(function(){
         FRAME.discardUploadFile.click(function(e){
           FRAME.previewUploadFrame.css({"display":"none"});
           FRAME.previewUploadFile.attr("src","");
+          reader = undefined;
         });
         FRAME.sendUploadFile.click(function(e){
           FRAME.previewUploadFrame.css({"display":"none"});
